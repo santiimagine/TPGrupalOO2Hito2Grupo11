@@ -70,4 +70,4 @@ Cada actualización del repositorio debe registrarse en la siguiente tabla, indi
 
 | Fecha | Caso de uso | PR | Responsable |
 |---|---|---|---|
-| 13/10/2026 | Base del proyecto (entidades, seguridad, página de inicio y script de datos) | (enlace a este PR) | Nicolas Campusano |
+| 13/10/2026 | Base del proyecto (entidades, seguridad, página de inicio y script de datos) | [#1](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/1) | Nicolas Campusano |
