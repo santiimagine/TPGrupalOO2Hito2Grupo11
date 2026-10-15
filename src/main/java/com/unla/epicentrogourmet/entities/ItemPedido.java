@@ -24,4 +24,13 @@ public class ItemPedido {
 	private Plato plato;
 
 	private int cantidad;
+
+	private double precioUnitario;
+
+	public double calcularSubtotal(){
+
+		return precioUnitario * cantidad;
+
+	}
+
 }

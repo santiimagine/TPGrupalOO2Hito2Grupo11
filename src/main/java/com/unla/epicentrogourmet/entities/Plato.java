@@ -21,4 +21,6 @@ public class Plato {
 	private double precioVenta;
 
 	private double costoProduccion;
+
+	private boolean activo = true;
 }

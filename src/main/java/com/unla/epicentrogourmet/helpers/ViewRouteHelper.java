@@ -8,6 +8,12 @@ public class ViewRouteHelper {
 	//ADMIN
 	public final static String ADMIN_INDEX = "admin/index";
 
+	//RESPONSABLE
+	public final static String RESPONSABLE_INDEX = "responsable/index";
+
+	//EMPLEADO
+	public final static String EMPLEADO_INDEX = "empleado/index";
+
 	//USER
 	public final static String USER_LOGIN = "user/login";
 	public final static String USER_LOGOUT = "user/logout";
@@ -15,4 +21,6 @@ public class ViewRouteHelper {
 	/**** Redirects ****/
 	public final static String ROUTE = "/index";
 	public final static String ADMIN_ROOT = "/admin";
+	public final static String RESPONSABLE_ROOT = "/responsable";
+	public final static String EMPLEADO_ROOT = "/empleado";
 }

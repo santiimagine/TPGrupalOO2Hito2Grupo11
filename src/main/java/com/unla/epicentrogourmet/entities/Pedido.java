@@ -37,4 +37,9 @@ public class Pedido {
 	@OneToMany(fetch=FetchType.LAZY)
 	@JoinColumn(name="pedido_id")
 	private Set<ItemPedido> items = new HashSet<>();
+
+	public double calcularTotal(){
+		return items.stream().mapToDouble(ItemPedido::calcularSubtotal).sum();
+	}
+
 }

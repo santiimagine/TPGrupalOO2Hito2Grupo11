@@ -18,9 +18,9 @@ public class UserController {
 						@RequestParam(required=false) String error,
 						@RequestParam(required=false) String logout,
 						Authentication authentication) {
-		if (authentication != null && authentication.getAuthorities().stream()
-				.anyMatch(authority -> authority.getAuthority().equals(Rol.ADMIN.name()))) {
-			return "redirect:" + ViewRouteHelper.ADMIN_ROOT;
+		if (authentication != null) {
+			String panel = panelSegunRol(authentication);
+			if (panel != null) return "redirect:" + panel;
 		}
 		model.addAttribute("error", error);
 		model.addAttribute("logout", logout);
@@ -34,11 +34,24 @@ public class UserController {
 
 	@GetMapping("/loginsuccess")
 	public String loginCheck(Authentication authentication) {
-		boolean isAdmin = authentication.getAuthorities().stream()
-				.anyMatch(authority -> authority.getAuthority().equals(Rol.ADMIN.name()));
-		if (isAdmin) {
-			return "redirect:" + ViewRouteHelper.ADMIN_ROOT;
-		}
-		return "redirect:" + ViewRouteHelper.ROUTE;
+
+		String panel = panelSegunRol(authentication);
+
+		return "redirect:" + (panel != null ? panel : ViewRouteHelper.ROUTE);
 	}
+
+	private boolean tieneRol(Authentication authentication, Rol rol){
+
+		return authentication.getAuthorities().stream()
+				.anyMatch(authority -> authority.getAuthority().equals(rol.name()));
+
+	}
+
+	private String panelSegunRol(Authentication authentication) {
+		if (tieneRol(authentication, Rol.ADMIN)) return ViewRouteHelper.ADMIN_ROOT;
+		if (tieneRol(authentication, Rol.EMPLEADO)) return ViewRouteHelper.EMPLEADO_ROOT;
+		if (tieneRol(authentication, Rol.RESPONSABLE)) return ViewRouteHelper.RESPONSABLE_ROOT;
+		return null;
+	}
+
 }

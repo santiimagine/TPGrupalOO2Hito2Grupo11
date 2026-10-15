@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="head">
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -20,6 +20,15 @@
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/index}">Inicio</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
+                        <a class="nav-link" th:href="@{/admin}">Panel</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasAuthority('RESPONSABLE')">
+                        <a class="nav-link" th:href="@{/responsable}">Mi unidad</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasAuthority('EMPLEADO')">
+                        <a class="nav-link" th:href="@{/empleado}">Mi panel</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">

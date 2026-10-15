@@ -36,7 +36,7 @@ public abstract class UnidadVenta {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="responsable_id")
-	private Empleado responsable;
+	private Usuario responsable;
 
 	private double superficie;
 
@@ -54,4 +54,7 @@ public abstract class UnidadVenta {
 
 	@OneToMany(fetch=FetchType.LAZY, mappedBy="unidadVenta")
 	private Set<Pedido> pedidos = new HashSet<>();
+
+	public abstract double calcularCanon();
+
 }

@@ -39,4 +39,7 @@ public abstract class Empleado {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="usuario_id", nullable=false)
 	private Usuario usuario;
+
+	public abstract double calcularSueldo(Festival festival);
+
 }

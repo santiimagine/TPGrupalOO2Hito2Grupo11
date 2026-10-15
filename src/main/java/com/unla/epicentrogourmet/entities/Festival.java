@@ -1,6 +1,7 @@
 package com.unla.epicentrogourmet.entities;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,4 +33,18 @@ public class Festival {
 
 	@OneToMany(fetch=FetchType.LAZY, mappedBy="festival")
 	private Set<UnidadVenta> unidades = new HashSet<>();
+
+	public long calcularDuracionEnDias() {
+
+		return ChronoUnit.DAYS.between(fechaInicio, fechaFin) + 1;
+
+	}
+
+	public boolean estaActivo(){
+
+		LocalDate hoy = LocalDate.now();
+		return !hoy.isBefore(fechaInicio) && !hoy.isAfter(fechaFin);
+
+	}
+
 }
