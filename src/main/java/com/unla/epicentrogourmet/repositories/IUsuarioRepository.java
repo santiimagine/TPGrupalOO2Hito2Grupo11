@@ -12,4 +12,6 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
 
 	@Query("SELECT u FROM Usuario u JOIN FETCH u.roles WHERE u.mail = (:mail)")
 	public abstract Usuario findByMailAndFetchRolesEagerly(@Param("mail") String mail);
+
+	boolean existsByMail(String mail);
 }
