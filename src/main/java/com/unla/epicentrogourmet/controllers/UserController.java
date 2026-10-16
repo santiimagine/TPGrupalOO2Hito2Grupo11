@@ -17,6 +17,7 @@ public class UserController {
 	public String login(Model model,
 						@RequestParam(required=false) String error,
 						@RequestParam(required=false) String logout,
+						@RequestParam(required=false) String registro,
 						Authentication authentication) {
 		if (authentication != null) {
 			String panel = panelSegunRol(authentication);
@@ -24,6 +25,7 @@ public class UserController {
 		}
 		model.addAttribute("error", error);
 		model.addAttribute("logout", logout);
+		model.addAttribute("registro", registro);
 		return ViewRouteHelper.USER_LOGIN;
 	}
 

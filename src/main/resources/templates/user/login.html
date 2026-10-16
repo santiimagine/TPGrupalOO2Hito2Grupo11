@@ -12,6 +12,7 @@
     <div class="login-container">
         <div class="card login-card">
             <div class="card-body">
+
                 <div class="login-header">
                     <h3>Epicentro Gourmet</h3>
                     <p class="text-muted">Inicie sesion para continuar</p>
@@ -23,6 +24,10 @@
 
                 <div th:if="${logout != null}" class="alert alert-success">
                     Cesion finalizada correctamente.
+                </div>
+
+                <div th:if="${registro != null}" class="alert alert-success">
+                    Registro exitoso. Ya podés iniciar sesión con tu mail y contraseña.
                 </div>
 
                 <form th:action="@{/loginprocess}" method="post">
