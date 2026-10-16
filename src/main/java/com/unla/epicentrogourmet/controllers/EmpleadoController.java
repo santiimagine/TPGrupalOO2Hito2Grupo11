@@ -1,27 +1,51 @@
 package com.unla.epicentrogourmet.controllers;
 
-import com.unla.epicentrogourmet.helpers.ViewRouteHelper;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
+import java.security.Principal;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.unla.epicentrogourmet.dtos.EmpleadoDTO;
+import com.unla.epicentrogourmet.helpers.ViewRouteHelper;
+import com.unla.epicentrogourmet.services.IEmpleadoService;
+
+
 @Controller
 @RequestMapping("/empleado")
 public class EmpleadoController {
 
-    @GetMapping("")
-    public ModelAndView index() {
-        ModelAndView modelAndView = new ModelAndView(ViewRouteHelper.EMPLEADO_INDEX);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication != null ? authentication.getPrincipal() : null;
-        if (principal instanceof User user) {
-            modelAndView.addObject("username", user.getUsername());
-        }
-        return modelAndView;
-    }
+    private final IEmpleadoService empleadoService;
 
+    public EmpleadoController(IEmpleadoService empleadoService) {
+        this.empleadoService = empleadoService;
+    }
+    //@GetMapping({""})
+    @GetMapping({"", "/"})
+    public ModelAndView index(Principal principal) {
+        ModelAndView mv = new ModelAndView(ViewRouteHelper.EMPLEADO_INDEX);
+
+        EmpleadoDTO empleado = empleadoService.traerPorMail(principal.getName());
+
+        mv.addObject("empleado", empleado);
+        mv.addObject("asignacionActual", empleadoService.traerAsignacionActual(empleado.getId()));
+        mv.addObject("asignaciones", empleadoService.traerAsignaciones(empleado.getId()));
+        mv.addObject("esCajero", "Cajero".equals(empleado.getTipoEmpleado()));
+
+        return mv;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

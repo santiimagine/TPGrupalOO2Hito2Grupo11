@@ -5,13 +5,88 @@
 <nav th:replace="~{layout :: navbar}"></nav>
 
 <main class="container py-4">
-    <!-- Hero Section -->
+
+    <!-- Hero: nombre del empleado + asignación actual-->
     <div class="hero-section text-center">
         <div class="container">
-            <h1>Panel de Empleado</h1>
-            <p class="mb-4">Bienvenido, <span th:text="${username}">empleado</span></p>
+            <h1 th:text="${empleado.nombre + ' ' + empleado.apellido}">Nombre Apellido</h1>
+            <p class="mb-4" th:text="${empleado.tipoEmpleado}">Cocinero</p>
+
+            <!-- Hay asignación en un festival activo -->
+            <div th:if="${asignacionActual != null}" class="card shadow-sm mx-auto text-start" style="max-width: 560px;">
+                <div class="card-body text-dark">
+                    <p class="text-muted mb-1">Hoy te toca trabajar en</p>
+                    <h2 class="h5 mb-2 fw-bold text-dark" th:text="${asignacionActual.festival}">Festival</h2>
+                    <p class="mb-0">
+                        <strong>Unidad de venta:</strong>
+                        <span class="fw-bold" th:text="${asignacionActual.unidadVenta}">Unidad</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Sin asignación -->
+            <div th:if="${asignacionActual == null}" class="alert alert-light mx-auto mb-0" style="max-width: 560px;">
+                No tenes asignación en ningún festival activo por el momento.
+            </div>
         </div>
     </div>
+
+    <!-- Mi información (Empleado)-->
+    <section class="mt-5">
+        <h2 class="h4 mb-3">Mi información</h2>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">DNI</dt>
+                    <dd class="col-sm-8" th:text="${empleado.dni}">00000000</dd>
+
+                    <dt class="col-sm-4">Fecha de nacimiento</dt>
+                    <dd class="col-sm-8" th:text="${#temporals.format(empleado.fechaNacimiento, 'dd/MM/yyyy')}">01/01/1990</dd>
+
+                    <dt class="col-sm-4">Fecha de ingreso</dt>
+                    <dd class="col-sm-8" th:text="${#temporals.format(empleado.fechaIngreso, 'dd/MM/yyyy')}">01/01/2020</dd>
+
+                    <th:block th:if="${empleado.tipoEmpleado == 'Cocinero'}">
+                        <dt class="col-sm-4">Especialidad</dt>
+                        <dd class="col-sm-8" th:text="${empleado.especialidad}">Parrilla</dd>
+                        <dt class="col-sm-4">Plus por categoría</dt>
+                        <dd class="col-sm-8" th:text="${'$' + #numbers.formatDecimal(empleado.plusCategoria, 1, 'POINT', 2, 'COMMA')}">$0,00</dd>
+                    </th:block>
+
+                    <th:block th:if="${empleado.tipoEmpleado == 'Cajero'}">
+                        <dt class="col-sm-4">Turno</dt>
+                        <dd class="col-sm-8" th:text="${empleado.turno}">Mañana</dd>
+                    </th:block>
+                </dl>
+            </div>
+        </div>
+    </section>
+
+    <!-- Festivales y unidades de trabajo (con descarga de recibo a la derecha) -->
+    <section class="mt-5">
+        <h2 class="h4 mb-3">Festivales y unidades de trabajo</h2>
+
+        <div th:if="${#lists.isEmpty(asignaciones)}" class="alert alert-secondary mb-0">
+            Todavía no trabajaste en ningún festival.
+        </div>
+
+        <ul th:unless="${#lists.isEmpty(asignaciones)}" class="list-group shadow-sm">
+            <li th:each="a : ${asignaciones}"
+                class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fw-semibold" th:text="${a.festival}">Festival</div>
+                    <small class="text-muted">
+                        Unidad: <span th:text="${a.unidadVenta}">Unidad</span> ·
+                        <span th:text="${#temporals.format(a.fechaInicio, 'dd/MM/yyyy')}">01/01/2026</span>
+                        al
+                        <span th:text="${#temporals.format(a.fechaFin, 'dd/MM/yyyy')}">03/01/2026</span>
+                    </small>
+                </div>
+                <span th:if="${a.activo}" class="text-muted small">Recibo disponible al finalizar</span>
+            </li>
+        </ul>
+    </section>
+
 </main>
 
 <footer th:replace="~{layout :: footer}"></footer>
