@@ -1,10 +1,23 @@
 package com.unla.epicentrogourmet.repositories;
 
 import com.unla.epicentrogourmet.entities.Empleado;
+import com.unla.epicentrogourmet.entities.UnidadVenta;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Collection;
+import java.util.Optional;
+
 
 @Repository("empleadoRepository")
 public interface IEmpleadoRepository extends JpaRepository<Empleado, Integer> {
 
+    @Query("SELECT e FROM Empleado e WHERE e.usuario.mail = :mail")
+    Optional<Empleado> traerPorMail(@Param("mail") String mail);
+
+    @Query("SELECT u FROM UnidadVenta u JOIN u.personal p WHERE p.id = :empleadoId")
+    Collection<UnidadVenta> traerUnidades(@Param("empleadoId") Integer empleadoId);
 }
+
