@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<main class="container py-4">
+    <div class="page-header">
+        <h2>Registrar unidad de venta</h2>
+    </div>
+
+    <div class="alert alert-danger" th:if="${error != null}" th:text="${error}"></div>
+
+    <div class="card form-card">
+        <div class="card-body">
+            <form th:action="@{/unidadventa/create}" th:object="${registro}" method="post">
+
+                <h5 class="mb-3">Datos del responsable</h5>
+                <div class="mb-3">
+                    <label for="mail" class="col-form-label">Mail</label>
+                    <input type="email" class="form-control" id="mail" th:field="*{mail}" placeholder="Ej: responsable@mail.com"/>
+                    <div class="text-danger" th:if="${#fields.hasErrors('mail')}" th:errors="*{mail}"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="contrasenia" class="col-form-label">Contraseña</label>
+                    <input type="password" class="form-control" id="contrasenia" th:field="*{contrasenia}" placeholder="Entre 6 y 50 caracteres"/>
+                    <div class="text-danger" th:if="${#fields.hasErrors('contrasenia')}" th:errors="*{contrasenia}"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="repetirContrasenia" class="col-form-label">Repetir contraseña</label>
+                    <input type="password" class="form-control" id="repetirContrasenia" th:field="*{repetirContrasenia}"/>
+                    <div class="text-danger" th:if="${#fields.hasErrors('repetirContrasenia')}" th:errors="*{repetirContrasenia}"></div>
+                </div>
+
+                <hr/>
+
+                <h5 class="mb-3">Datos de la unidad de venta</h5>
+                <div class="mb-3">
+                    <label for="nombreComercial" class="col-form-label">Nombre comercial</label>
+                    <input type="text" class="form-control" id="nombreComercial" th:field="*{nombreComercial}" placeholder="Ej: El Fogón"/>
+                    <div class="text-danger" th:if="${#fields.hasErrors('nombreComercial')}" th:errors="*{nombreComercial}"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="superficie" class="col-form-label">Superficie (m²)</label>
+                    <input type="number" step="0.01" class="form-control" id="superficie" th:field="*{superficie}" placeholder="Ej: 20"/>
+                    <div class="text-danger" th:if="${#fields.hasErrors('superficie')}" th:errors="*{superficie}"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="codigo" class="col-form-label">Codigo</label>
+                    <input type="text" class="form-control" id="codigo" th:field="*{codigo}" placeholder="Ej: FOGF020001"/>
+                    <small class="form-text text-muted">10 caracteres: solo mayusculas y numeros.</small>
+                    <div class="text-danger" th:if="${#fields.hasErrors('codigo')}" th:errors="*{codigo}"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="festivalId" class="col-form-label">Festival</label>
+                    <select class="form-control" id="festivalId" th:field="*{festivalId}">
+                        <option value="">-- Seleccionar festival --</option>
+                        <option th:each="festival : ${festivales}" th:value="${festival.id}" th:text="${festival.nombre}"></option>
+                    </select>
+                    <div class="text-danger" th:if="${#fields.hasErrors('festivalId')}" th:errors="*{festivalId}"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="tipo" class="col-form-label">Tipo de unidad</label>
+                    <select class="form-control" id="tipo" th:field="*{tipo}">
+                        <option value="">-- Seleccionar tipo --</option>
+                        <option th:each="t : ${tipos}" th:value="${t}"
+                                th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(t, '_', ' ')))}"></option>
+                    </select>
+                    <div class="text-danger" th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}"></div>
+                </div>
+
+                <div id="campos-foodtruck" style="display: none;">
+                    <div class="mb-3">
+                        <label for="patente" class="col-form-label">Patente</label>
+                        <input type="text" class="form-control" id="patente" th:field="*{patente}" placeholder="Ej: AB123CD"/>
+                        <div class="text-danger" th:if="${#fields.hasErrors('patente')}" th:errors="*{patente}"></div>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="requiereElectricidad" th:field="*{requiereElectricidad}"/>
+                        <label for="requiereElectricidad" class="form-check-label">Requiere conexión eléctrica</label>
+                    </div>
+                </div>
+
+                <div id="campos-puesto" style="display: none;">
+                    <div class="mb-3">
+                        <label for="cantidadCarpas" class="col-form-label">Cantidad de carpas</label>
+                        <input type="number" class="form-control" id="cantidadCarpas" th:field="*{cantidadCarpas}"/>
+                        <div class="text-danger" th:if="${#fields.hasErrors('cantidadCarpas')}" th:errors="*{cantidadCarpas}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tiempoMontaje" class="col-form-label">Tiempo de montaje (minutos)</label>
+                        <input type="number" class="form-control" id="tiempoMontaje" th:field="*{tiempoMontaje}"/>
+                        <div class="text-danger" th:if="${#fields.hasErrors('tiempoMontaje')}" th:errors="*{tiempoMontaje}"></div>
+                    </div>
+                </div>
+
+                <div class="d-flex">
+                    <button type="submit" class="btn btn-success mr-2">Registrar</button>
+                    <a th:href="@{/index}" class="btn btn-outline-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+<div th:replace="~{layout :: scripts}"></div>
+
+<script>
+    (function () {
+        var tipo = document.getElementById('tipo');
+        var foodTruck = document.getElementById('campos-foodtruck');
+        var puesto = document.getElementById('campos-puesto');
+        function actualizar() {
+            foodTruck.style.display = tipo.value === 'FOOD_TRUCK' ? 'block' : 'none';
+            puesto.style.display = tipo.value === 'PUESTO_DESARMABLE' ? 'block' : 'none';
+        }
+        tipo.addEventListener('change', actualizar);
+        actualizar();
+    })();
+</script>
+</body>
+</html>
