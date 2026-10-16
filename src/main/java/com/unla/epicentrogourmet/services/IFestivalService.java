@@ -6,4 +6,6 @@ import com.unla.epicentrogourmet.entities.Festival;
 public interface IFestivalService {
 
 	List<Festival> getAll();
+
+	List<Festival> getVigentes();
 }

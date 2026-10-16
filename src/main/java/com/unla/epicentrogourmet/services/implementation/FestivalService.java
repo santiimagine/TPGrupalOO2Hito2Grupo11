@@ -1,4 +1,5 @@
 package com.unla.epicentrogourmet.services.implementation;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -19,5 +20,10 @@ public class FestivalService implements IFestivalService {
 	@Override
 	public List<Festival> getAll() {
 		return festivalRepository.findAll();
+	}
+
+	@Override
+	public List<Festival> getVigentes() {
+		return festivalRepository.findByFechaFinGreaterThanEqual(LocalDate.now());
 	}
 }

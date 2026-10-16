@@ -72,3 +72,4 @@ Cada actualización del repositorio debe registrarse en la siguiente tabla, indi
 |---|---|---|---|
 | 13/10/2026 | Base del proyecto (entidades, seguridad, página de inicio y script de datos) | [#1](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/1) | Nicolas Campusano |
 | 16/10/2026 | Empleado: Ver información & Ver Actualidad| [#2](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/tree/CUFuncionalidadesEmpleados) | Santiago Saitz |
+| 16/10/2026 | Registro de unidad de venta con responsable | [#4](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/4) | Nicolas Campusano |

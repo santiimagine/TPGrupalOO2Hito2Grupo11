@@ -11,7 +11,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.unla.epicentrogourmet.dtos.FestivalDTO;
-import com.unla.epicentrogourmet.entities.enums.Rol;
 import com.unla.epicentrogourmet.helpers.ViewRouteHelper;
 import com.unla.epicentrogourmet.services.IFestivalService;
 
@@ -31,19 +30,13 @@ public class HomeController {
 	//GET Example: SERVER/index
 	@GetMapping("/index")
 	public ModelAndView index() {
-		ModelAndView modelAndView = new ModelAndView(ViewRouteHelper.INDEX);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Object principal = authentication != null ? authentication.getPrincipal() : null;
-		if (principal instanceof User user) {
-			boolean isAdmin = user.getAuthorities().stream()
-					.anyMatch(authority -> authority.getAuthority().equals(Rol.ADMIN.name()));
-			if (isAdmin) {
-				return new ModelAndView(new RedirectView(ViewRouteHelper.ADMIN_ROOT));
-			}
-			modelAndView.addObject("username", user.getUsername());
-		} else {
-			modelAndView.addObject("username", "anonymous");
+		if (principal instanceof User) {
+			return new ModelAndView(new RedirectView("/loginsuccess"));
 		}
+		ModelAndView modelAndView = new ModelAndView(ViewRouteHelper.INDEX);
+		modelAndView.addObject("username", "anonymous");
 		modelAndView.addObject("festivales", festivalService.getAll()
 				.stream()
 				.map(festival -> modelMapper.map(festival, FestivalDTO.class))

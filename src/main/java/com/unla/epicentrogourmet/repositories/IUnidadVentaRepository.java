@@ -12,4 +12,7 @@ public interface IUnidadVentaRepository extends JpaRepository<UnidadVenta, Integ
     //Devuelve las unidades de venta del responsable logueado
     List<UnidadVenta> findByResponsableMail (String mail);
 
+    boolean existsByCodigo(String codigo);
+
+
 }
