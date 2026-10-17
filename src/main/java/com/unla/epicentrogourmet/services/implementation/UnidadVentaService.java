@@ -1,12 +1,14 @@
 package com.unla.epicentrogourmet.services.implementation;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.unla.epicentrogourmet.dtos.RegistroUnidadVentaDTO;
+import com.unla.epicentrogourmet.dtos.UnidadVentaDTO;
 import com.unla.epicentrogourmet.entities.Festival;
 import com.unla.epicentrogourmet.entities.FoodTruck;
 import com.unla.epicentrogourmet.entities.PuestoDesarmable;
@@ -97,5 +99,24 @@ public class UnidadVentaService implements IUnidadVentaService {
         unidad.setResponsable(usuario);
 
         return unidadVentaRepository.save(unidad);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UnidadVentaDTO> traerPorFestival(Integer festivalId) {
+        return unidadVentaRepository.findByFestivalId(festivalId).stream()
+                .map(this::toUnidadVentaDTO)
+                .toList();
+    }
+
+    private UnidadVentaDTO toUnidadVentaDTO(UnidadVenta u) {
+        UnidadVentaDTO dto = new UnidadVentaDTO();
+        dto.setId(u.getId());
+        dto.setNombreComercial(u.getNombreComercial());
+        dto.setTipo(u instanceof FoodTruck ? "Food truck" : "Puesto desarmable");
+        dto.setCodigo(u.getCodigo());
+        dto.setSuperficie(u.getSuperficie());
+        dto.setResponsableMail(u.getResponsable().getMail());
+        return dto;
     }
 }
