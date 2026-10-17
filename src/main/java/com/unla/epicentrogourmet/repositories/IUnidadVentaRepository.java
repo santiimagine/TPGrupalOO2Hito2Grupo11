@@ -14,5 +14,6 @@ public interface IUnidadVentaRepository extends JpaRepository<UnidadVenta, Integ
 
     boolean existsByCodigo(String codigo);
 
-
+    //Devuelve las unidades de venta de un festival
+    List<UnidadVenta> findByFestivalId(Integer festivalId);
 }
