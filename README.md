@@ -74,3 +74,4 @@ Cada actualización del repositorio debe registrarse en la siguiente tabla, indi
 | 16/10/2026 | Empleado: Ver información & Ver Actualidad| [#2 y #3](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/tree/CUFuncionalidadesEmpleados) | Santiago Saitz |
 | 16/10/2026 | Registro de unidad de venta con responsable | [#4](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/4) | Nicolas Campusano |
 | 17/10/2026 | Administrador 1 - 2: Ver festivales y unidades de venta de un festival | [#5](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/5) | Nicolas Campusano |
+| 19/10/2026 | Administrador 3: Ranking UnidadesVenta - Responsable 5: Reporte Recaudacion | [#6](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/6) | Nicolas Campusano |
