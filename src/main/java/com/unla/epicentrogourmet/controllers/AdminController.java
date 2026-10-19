@@ -2,6 +2,7 @@ package com.unla.epicentrogourmet.controllers;
 
 import java.util.List;
 
+
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +17,7 @@ import com.unla.epicentrogourmet.dtos.FestivalDTO;
 import com.unla.epicentrogourmet.helpers.ViewRouteHelper;
 import com.unla.epicentrogourmet.services.IFestivalService;
 import com.unla.epicentrogourmet.services.IUnidadVentaService;
+import com.unla.epicentrogourmet.services.IReporteService;
 
 @Controller
 @RequestMapping("/admin")
@@ -25,18 +27,22 @@ public class AdminController {
 
 	private final IUnidadVentaService unidadVentaService;
 
+	private final IReporteService reporteService;
+
 	private final ModelMapper modelMapper;
 
 	public AdminController(IFestivalService festivalService, IUnidadVentaService unidadVentaService,
-						   ModelMapper modelMapper) {
+						   IReporteService reporteService, ModelMapper modelMapper) {
 		this.festivalService = festivalService;
 		this.unidadVentaService = unidadVentaService;
+		this.reporteService = reporteService;
 		this.modelMapper = modelMapper;
 	}
 
-	//GET Example: SERVER/admin  o  SERVER/admin?festivalId=1
+	//GET Example: SERVER/admin  o  SERVER/admin?festivalId=1&vista=ranking
 	@GetMapping("")
-	public ModelAndView index(@RequestParam(required = false) Integer festivalId) {
+	public ModelAndView index(@RequestParam(required = false) Integer festivalId,
+							  @RequestParam(defaultValue = "unidades") String vista) {
 		ModelAndView modelAndView = new ModelAndView(ViewRouteHelper.ADMIN_INDEX);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Object principal = authentication != null ? authentication.getPrincipal() : null;
@@ -55,7 +61,13 @@ public class AdminController {
 				.findFirst()
 				.ifPresent(festival -> {
 					modelAndView.addObject("festivalSeleccionado", festival);
-					modelAndView.addObject("unidades", unidadVentaService.traerPorFestival(festival.getId()));
+					if ("ranking".equals(vista)) {
+						modelAndView.addObject("vista", "ranking");
+						modelAndView.addObject("ranking", reporteService.rankingPorRecaudacion(festival.getId()));
+					} else {
+						modelAndView.addObject("vista", "unidades");
+						modelAndView.addObject("unidades", unidadVentaService.traerPorFestival(festival.getId()));
+					}
 				});
 		return modelAndView;
 	}
