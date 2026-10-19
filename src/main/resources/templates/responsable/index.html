@@ -12,6 +12,9 @@
       <p class="mb-4">Bienvenido, <span th:text="${username}">responsable</span></p>
     </div>
   </div>
+  <div class="text-center">
+    <a th:href="@{/responsable/empleados}" class="btn btn-dark">Gestionar empleados</a>
+  </div>
 </main>
 
 <footer th:replace="~{layout :: footer}"></footer>

@@ -13,6 +13,7 @@ public class ViewRouteHelper {
 
 	//EMPLEADO
 	public final static String EMPLEADO_INDEX = "empleado/index";
+	public final static String EMPLEADO_LIST = "responsable/empleados/list";
 
 	//UNIDAD-VENTA
 	public final static String UNIDADVENTA_NEW = "unidadventa/new";
@@ -27,4 +28,5 @@ public class ViewRouteHelper {
 	public final static String RESPONSABLE_ROOT = "/responsable";
 	public final static String EMPLEADO_ROOT = "/empleado";
 	public final static String LOGIN_REGISTRO_OK = "/login?registro=ok";
+	public final static String EMPLEADOS_ROOT = "/responsable/empleados";
 }

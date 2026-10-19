@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -19,5 +20,11 @@ public interface IEmpleadoRepository extends JpaRepository<Empleado, Integer> {
 
     @Query("SELECT u FROM UnidadVenta u JOIN u.personal p WHERE p.id = :empleadoId")
     Collection<UnidadVenta> traerUnidades(@Param("empleadoId") Integer empleadoId);
+
+    @Query("SELECT DISTINCT e FROM UnidadVenta u JOIN u.personal e "+
+            "WHERE u.responsable.mail = :mail AND e.activo = true " +
+            "ORDER BY e.apellido, e.nombre")
+    List<Empleado> traerActivosPorResponsable(@Param("mail") String mail);
+
 }
 
