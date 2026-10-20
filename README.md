@@ -71,9 +71,9 @@ Cada actualización del repositorio debe registrarse en la siguiente tabla, indi
 | Fecha | Caso de uso | PR | Responsable |
 |---|---|---|---|
 | 13/10/2026 | Base del proyecto (entidades, seguridad, página de inicio y script de datos) | [#1](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/1) | Nicolás Campusano |
-| 16/10/2026 | Empleado: Ver información & Ver Actualidad| [#2 y #3](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/tree/CUFuncionalidadesEmpleados) | Santiago Saitz |
+| 16/10/2026 | Empleado: Ver información & Ver Actualidad| [#2 y #3](https://github.com/santiimagine/pull/3) | Santiago Saitz |
 | 16/10/2026 | Registro de unidad de venta con responsable | [#4](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/4) | Nicolás Campusano |
 | 17/10/2026 | Administrador 1 - 2: Ver festivales y unidades de venta de un festival | [#5](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/5) | Nicolás Campusano |
 | 19/10/2026 | Administrador 3: Ranking UnidadesVenta - Responsable 5: Reporte Recaudacion | [#6](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/6) | Nicolás Campusano |
 | 20/10/2026 | Administrador 4: Unidades con Mayor Canon - Responsable 3: Cálculo de Canon | [#7](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/7) | Nicolás Campusano |
-| 20/10/2026 | Empleado: Liquidación de Haberes y Descargar Recibo de Sueldo | [#9](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/9 | Santiago Saitz |
+| 20/10/2026 | Empleado: Liquidación de Haberes y Descargar Recibo de Sueldo | [#9](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/9)  | Santiago Saitz |
