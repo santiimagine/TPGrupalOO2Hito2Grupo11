@@ -26,5 +26,7 @@ public interface IEmpleadoRepository extends JpaRepository<Empleado, Integer> {
             "ORDER BY e.apellido, e.nombre")
     List<Empleado> traerActivosPorResponsable(@Param("mail") String mail);
 
+    boolean existsByDni(String dni);
+
 }
 

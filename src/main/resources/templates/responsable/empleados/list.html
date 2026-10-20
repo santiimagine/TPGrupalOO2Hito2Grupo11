@@ -9,6 +9,10 @@
         <h2>Empleados</h2>
     </div>
 
+    <div class="mb-3">
+        <a th:href="@{/responsable/empleados/new}" class="btn btn-success">+ Nuevo empleado</a>
+    </div>
+
     <div class="alert alert-success" th:if="${mensaje != null}" th:text="${mensaje}"></div>
 
     <div class="card" th:if="${!empleados.isEmpty()}">
