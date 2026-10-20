@@ -77,3 +77,4 @@ Cada actualización del repositorio debe registrarse en la siguiente tabla, indi
 | 19/10/2026 | Administrador 3: Ranking UnidadesVenta - Responsable 5: Reporte Recaudacion | [#6](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/6) | Nicolás Campusano |
 | 20/10/2026 | Administrador 4: Unidades con Mayor Canon - Responsable 3: Cálculo de Canon | [#7](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/7) | Nicolás Campusano |
 | 20/10/2026 | Empleado: Liquidación de Haberes y Descargar Recibo de Sueldo | [#9](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/9)  | Santiago Saitz |
+| 20/10/2026 | Responsable: Alta de plato (CU 13) | [#10](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/10) | Emanuel Sotelo |
