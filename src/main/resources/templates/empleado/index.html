@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{layout :: head}"></head>
@@ -82,11 +83,17 @@
                         <span th:text="${#temporals.format(a.fechaFin, 'dd/MM/yyyy')}">03/01/2026</span>
                     </small>
                 </div>
+                <!-- Botón PDF -->
+                <a th:if="${!a.activo}"
+                   th:href="@{/empleado/festivales/{id}/recibo(id=${a.festivalId})}"
+                   class="btn btn-danger">
+                    Descargar recibo (PDF)
+                </a>
+
                 <span th:if="${a.activo}" class="text-muted small">Recibo disponible al finalizar</span>
             </li>
         </ul>
     </section>
-
 </main>
 
 <footer th:replace="~{layout :: footer}"></footer>
