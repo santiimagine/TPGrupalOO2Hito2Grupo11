@@ -1,6 +1,7 @@
 package com.unla.epicentrogourmet.services.implementation;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +52,23 @@ public class PlatoService implements IPlatoService {
         unidad.getPlatos().add(plato);
 
         return toListadoDTO(plato);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PlatoListadoDTO> listar(String mailResponsable, Integer festivalId, String nombre,
+                                        Double precioMin, Double precioMax) {
+        UnidadVenta unidad = responsableService.traerUnidad(mailResponsable, festivalId);
+
+        // Validacion de carga: el rango de precios tiene que tener sentido
+        if (precioMin != null && precioMax != null && precioMin > precioMax) {
+            throw new IllegalArgumentException("El precio mínimo no puede ser mayor al precio máximo");
+        }
+
+        String filtroNombre = (nombre == null || nombre.isBlank()) ? null : nombre.trim();
+        return platoRepository.filtrar(unidad.getId(), filtroNombre, precioMin, precioMax).stream()
+                .map(this::toListadoDTO)
+                .toList();
     }
 
     private PlatoListadoDTO toListadoDTO(Plato p) {

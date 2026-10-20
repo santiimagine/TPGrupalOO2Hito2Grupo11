@@ -18,6 +18,7 @@ public class ViewRouteHelper {
 	public final static String UNIDADVENTA_NEW = "unidadventa/new";
 
 	//PLATO (Responsable)
+	public final static String PLATO_INDEX = "plato/index";
 	public final static String PLATO_NEW = "plato/new";
 
 	//USER
