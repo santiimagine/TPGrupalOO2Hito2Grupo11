@@ -37,6 +37,26 @@ public class PlatoController {
 		this.responsableService = responsableService;
 	}
 
+	@GetMapping("")
+	public ModelAndView index(Principal principal, @RequestParam(required = false) Integer festivalId,
+			@RequestParam(required = false) String nombre, @RequestParam(required = false) Double precioMin,
+			@RequestParam(required = false) Double precioMax) {
+		ModelAndView mAV = new ModelAndView(ViewRouteHelper.PLATO_INDEX);
+		cargarFestivales(mAV, principal.getName(), festivalId);
+		Integer elegido = (Integer) mAV.getModel().get("festivalId");
+		mAV.addObject("nombre", nombre);
+		mAV.addObject("precioMin", precioMin);
+		mAV.addObject("precioMax", precioMax);
+		if (elegido != null) {
+			try {
+				mAV.addObject("platos", platoService.listar(principal.getName(), elegido, nombre, precioMin, precioMax));
+			} catch (IllegalArgumentException e) {
+				mAV.addObject("error", e.getMessage());
+			}
+		}
+		return mAV;
+	}
+
 	@GetMapping("/nuevo")
 	public ModelAndView nuevo(Principal principal, @RequestParam(required = false) Integer festivalId) {
 		ModelAndView mAV = new ModelAndView(ViewRouteHelper.PLATO_NEW);
@@ -54,7 +74,7 @@ public class PlatoController {
 			try {
 				platoService.alta(principal.getName(), festivalId, plato);
 				redirectAttributes.addFlashAttribute("exito", "El plato se agregó al menú de tu unidad");
-				return new ModelAndView("redirect:" + ViewRouteHelper.PLATO_ROOT + "/nuevo?festivalId=" + festivalId);
+				return new ModelAndView("redirect:" + ViewRouteHelper.PLATO_ROOT + "?festivalId=" + festivalId);
 			} catch (IllegalArgumentException e) {
 				mAV.addObject("error", e.getMessage());
 			}

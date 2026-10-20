@@ -1,5 +1,7 @@
 package com.unla.epicentrogourmet.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,4 +16,14 @@ public interface IPlatoRepository extends JpaRepository<Plato, Integer> {
     @Query("select count(p) from UnidadVenta u join u.platos p "
             + "where u.id = :unidadId and lower(p.nombre) = lower(:nombre)")
     long contarPorNombreEnUnidad(@Param("unidadId") Integer unidadId, @Param("nombre") String nombre);
+
+    //Platos activos del menu de la unidad. Los filtros son opcionales: si llegan en null no se aplican.
+    @Query("select p from UnidadVenta u join u.platos p "
+            + "where u.id = :unidadId and p.activo = true "
+            + "and (:nombre is null or lower(p.nombre) like lower(concat('%', :nombre, '%'))) "
+            + "and (:precioMin is null or p.precioVenta >= :precioMin) "
+            + "and (:precioMax is null or p.precioVenta <= :precioMax) "
+            + "order by p.nombre")
+    List<Plato> filtrar(@Param("unidadId") Integer unidadId, @Param("nombre") String nombre,
+                        @Param("precioMin") Double precioMin, @Param("precioMax") Double precioMax);
 }
