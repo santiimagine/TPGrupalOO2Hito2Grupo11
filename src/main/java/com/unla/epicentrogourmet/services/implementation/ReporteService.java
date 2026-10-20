@@ -14,6 +14,7 @@ import com.unla.epicentrogourmet.entities.UnidadVenta;
 import com.unla.epicentrogourmet.repositories.IPedidoRepository;
 import com.unla.epicentrogourmet.repositories.IUnidadVentaRepository;
 import com.unla.epicentrogourmet.services.IReporteService;
+import com.unla.epicentrogourmet.dtos.ReporteMayoresCanonDTO;
 
 @Service("reporteService")
 public class ReporteService implements IReporteService {
@@ -52,11 +53,42 @@ public class ReporteService implements IReporteService {
         return dto;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReporteMayoresCanonDTO> mayoresCanon(Integer festivalId, int cantidad) {
+        return unidadVentaRepository.findByFestivalId(festivalId).stream()
+                .map(this::toReporteMayoresCanonDTO)
+                .sorted(Comparator.comparingDouble(ReporteMayoresCanonDTO::getCanon).reversed())
+                .limit(cantidad)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public double calcularCanon(Integer unidadVentaId) {
+        return unidadVentaRepository.findById(unidadVentaId)
+                .orElseThrow(() -> new IllegalArgumentException("La unidad de venta no existe"))
+                .calcularCanon();
+    }
+
+    private String tipoDeUnidad(UnidadVenta u) {
+        return u instanceof FoodTruck ? "Food truck" : "Puesto desarmable";
+    }
+
+    private ReporteMayoresCanonDTO toReporteMayoresCanonDTO(UnidadVenta u) {
+        ReporteMayoresCanonDTO dto = new ReporteMayoresCanonDTO();
+        dto.setNombreComercial(u.getNombreComercial());
+        dto.setCodigo(u.getCodigo());
+        dto.setTipoUnidad(tipoDeUnidad(u));
+        dto.setCanon(u.calcularCanon());
+        return dto;
+    }
+
     private ReporteVentaDTO toReporteVentaDTO(UnidadVenta u, double recaudacion) {
         ReporteVentaDTO dto = new ReporteVentaDTO();
         dto.setNombreComercial(u.getNombreComercial());
         dto.setCodigo(u.getCodigo());
-        dto.setTipoUnidad(u instanceof FoodTruck ? "Food truck" : "Puesto desarmable");
+        dto.setTipoUnidad(tipoDeUnidad(u));
         dto.setRecaudacionTotal(recaudacion);
         return dto;
     }
