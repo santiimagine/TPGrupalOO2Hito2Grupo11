@@ -90,12 +90,27 @@ public class EmpleadoService
             throw new IllegalStateException("El recibo se habilita cuando finaliza el festival");
         }
 
+        double total = calcularSueldo(empleadoId, festivalId);
+
         EmpleadoDTO dto = toEmpleadoDTO(empleado);
         long dias = ChronoUnit.DAYS.between(asignacion.getFechaInicio(), asignacion.getFechaFin()) + 1;
-        double total = calcularSueldoFestival(dto, asignacion.getFechaFin(), dias);
 
         return armarPdf(dto, asignacion, dias, total);
     }
+
+    @Override
+    @Transactional
+    public double calcularSueldo(Integer empleadoId, Integer festivalId) {
+        Empleado empleado = empleadoRepository.findById(empleadoId)
+                .orElseThrow(() -> new IllegalArgumentException("Empleado no encontrado"));
+        AsignacionDTO asignacion = traerAsignaciones(empleadoId).stream()
+                .filter(a -> Objects.equals(a.getFestivalId(), festivalId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("El empleado no trabajó en ese festival"));
+        long dias = ChronoUnit.DAYS.between(asignacion.getFechaInicio(), asignacion.getFechaFin()) + 1;
+        return calcularSueldoFestival(toEmpleadoDTO(empleado), asignacion.getFechaFin(), dias);
+    }
+
 
     // Liquidación: factor por duración del festival x (sueldo base + plus o antiguedad)
     private double calcularSueldoFestival(EmpleadoDTO empleado, LocalDate finFestival, long dias) {
