@@ -39,9 +39,14 @@
                         <td th:text="${#temporals.format(festival.fechaFin, 'dd/MM/yyyy')}"></td>
                         <td class="text-right">
                             <a class="btn btn-sm btn-outline-dark"
+                               th:classappend="${festivalSeleccionado != null and festivalSeleccionado.id == festival.id and vista == 'unidades'} ? 'active'"
                                th:href="|@{/admin(festivalId=${festival.id},vista='unidades')}#detalle|">Ver unidades</a>
                             <a class="btn btn-sm btn-outline-dark"
+                               th:classappend="${festivalSeleccionado != null and festivalSeleccionado.id == festival.id and vista == 'ranking'} ? 'active'"
                                th:href="|@{/admin(festivalId=${festival.id},vista='ranking')}#detalle|">Ver ranking recaudacion</a>
+                            <a class="btn btn-sm btn-outline-dark"
+                               th:classappend="${festivalSeleccionado != null and festivalSeleccionado.id == festival.id and vista == 'canon'} ? 'active'"
+                               th:href="|@{/admin(festivalId=${festival.id},vista='canon')}#detalle|">Ver mayor canon</a>
                         </td>
                     </tr>
                     </tbody>
@@ -53,16 +58,18 @@
         No hay festivales cargados.
     </div>
 
-    <!-- Detalle del festival elegido: unidades o ranking -->
+    <!-- Detalle del festival elegido: unidades | ranking | canon-->
     <div class="card" id="detalle" th:if="${festivalSeleccionado != null}">
         <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0">
+                <span th:if="${vista == 'unidades'}">Unidades de venta de </span>
                 <span th:if="${vista == 'ranking'}">Ranking de unidades de </span>
-                <span th:if="${vista != 'ranking'}">Unidades de venta de </span>
+                <span th:if="${vista == 'canon'}">Mayor canon de </span>
                 <span th:text="${festivalSeleccionado.nombre}"></span>
             </h5>
             <a class="btn btn-sm btn-light" th:href="@{/admin}">Cerrar</a>
         </div>
+
         <div class="card-body">
             <div th:if="${vista == 'unidades'}">
             <div class="table-responsive" th:if="${!unidades.isEmpty()}">
@@ -119,6 +126,44 @@
                     Este festival todavía no tiene unidades de venta.
                 </div>
             </div>
+
+
+            <div th:if="${vista == 'canon'}">
+                <form class="form-inline mb-3" method="get" th:action="|@{/admin}#detalle|">
+                    <input type="hidden" name="festivalId" th:value="${festivalSeleccionado.id}"/>
+                    <input type="hidden" name="vista" value="canon"/>
+                    <label class="mr-2" for="cantidad">Cantidad de unidades:</label>
+                    <input class="form-control form-control-sm mr-2" type="number" id="cantidad" name="cantidad"
+                           min="1" th:value="${cantidad}" style="width: 80px;"/>
+                    <button class="btn btn-sm btn-dark" type="submit">Ver</button>
+                </form>
+                <div class="table-responsive" th:if="${!mayoresCanon.isEmpty()}">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nombre comercial</th>
+                            <th>Tipo</th>
+                            <th>Código</th>
+                            <th class="text-right">Canon</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item, iter : ${mayoresCanon}">
+                            <td th:text="${iter.count}"></td>
+                            <td th:text="${item.nombreComercial}"></td>
+                            <td th:text="${item.tipoUnidad}"></td>
+                            <td th:text="${item.codigo}"></td>
+                            <td class="text-right" th:text="|$ ${#numbers.formatDecimal(item.canon, 1, 'POINT', 2, 'COMMA')}|"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="alert alert-info mb-0" th:if="${mayoresCanon.isEmpty()}">
+                    Este festival todavía no tiene unidades de venta.
+                </div>
+            </div>
+
         </div>
     </div>
 </main>
