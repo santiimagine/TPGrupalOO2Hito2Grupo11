@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<main class="container py-4">
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1>Agregar plato</h1>
+            <p class="mb-4">El plato se suma al menú de tu unidad en el festival elegido</p>
+        </div>
+    </div>
+
+    <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+    <div class="alert alert-info" th:if="${festivales == null or festivales.isEmpty()}">
+        No tenés unidades de venta registradas, no podés cargar platos.
+    </div>
+
+    <div class="card" th:if="${festivales != null and !festivales.isEmpty()}">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Datos del plato</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/responsable/platos/crear}" th:object="${plato}" method="post">
+                <div class="form-group">
+                    <label for="festivalId">Festival</label>
+                    <select class="form-control" id="festivalId" name="festivalId">
+                        <option th:each="f : ${festivales}" th:value="${f.id}" th:text="${f.nombre}"
+                                th:selected="${f.id == festivalId}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" th:field="*{nombre}" maxlength="100"/>
+                    <small class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
+                </div>
+                <div class="form-group">
+                    <label for="precioVenta">Precio de venta ($)</label>
+                    <input type="number" step="0.01" min="0" class="form-control" id="precioVenta" th:field="*{precioVenta}"/>
+                    <small class="text-danger" th:if="${#fields.hasErrors('precioVenta')}" th:errors="*{precioVenta}"></small>
+                </div>
+                <div class="form-group">
+                    <label for="costoProduccion">Costo de producción ($)</label>
+                    <input type="number" step="0.01" min="0" class="form-control" id="costoProduccion" th:field="*{costoProduccion}"/>
+                    <small class="text-danger" th:if="${#fields.hasErrors('costoProduccion')}" th:errors="*{costoProduccion}"></small>
+                </div>
+                <button type="submit" class="btn btn-dark">Agregar plato</button>
+                <a class="btn btn-outline-dark" th:href="@{/responsable}">Volver</a>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+<div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>
