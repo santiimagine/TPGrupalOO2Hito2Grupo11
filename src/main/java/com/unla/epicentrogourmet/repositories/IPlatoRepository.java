@@ -26,4 +26,14 @@ public interface IPlatoRepository extends JpaRepository<Plato, Integer> {
             + "order by p.nombre")
     List<Plato> filtrar(@Param("unidadId") Integer unidadId, @Param("nombre") String nombre,
                         @Param("precioMin") Double precioMin, @Param("precioMax") Double precioMax);
+
+    //Devuelve [idPlato, nombre, precioVenta, cantidad de pedidos en los que aparece, unidades vendidas]
+    //de la unidad en el festival. El primero es el plato estrella: mas pedidos, y si empatan, mas unidades vendidas.
+    @Query("select i.plato.id, i.plato.nombre, i.plato.precioVenta, count(distinct p.id), sum(i.cantidad) "
+            + "from Pedido p join p.items i "
+            + "where p.unidadVenta.id = :unidadId and p.festival.id = :festivalId "
+            + "group by i.plato.id, i.plato.nombre, i.plato.precioVenta "
+            + "order by count(distinct p.id) desc, sum(i.cantidad) desc, i.plato.nombre asc")
+    List<Object[]> platosPorCantidadDePedidos(@Param("unidadId") Integer unidadId,
+                                              @Param("festivalId") Integer festivalId);
 }

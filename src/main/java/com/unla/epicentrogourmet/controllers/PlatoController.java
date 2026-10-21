@@ -57,6 +57,21 @@ public class PlatoController {
 		return mAV;
 	}
 
+	@GetMapping("/estrella")
+	public ModelAndView estrella(Principal principal, @RequestParam(required = false) Integer festivalId) {
+		ModelAndView mAV = new ModelAndView(ViewRouteHelper.PLATO_ESTRELLA);
+		cargarFestivales(mAV, principal.getName(), festivalId);
+		Integer elegido = (Integer) mAV.getModel().get("festivalId");
+		if (elegido != null) {
+			try {
+				mAV.addObject("platoEstrella", platoService.platoEstrella(principal.getName(), elegido));
+			} catch (IllegalArgumentException e) {
+				mAV.addObject("error", e.getMessage());
+			}
+		}
+		return mAV;
+	}
+
 	@GetMapping("/nuevo")
 	public ModelAndView nuevo(Principal principal, @RequestParam(required = false) Integer festivalId) {
 		ModelAndView mAV = new ModelAndView(ViewRouteHelper.PLATO_NEW);

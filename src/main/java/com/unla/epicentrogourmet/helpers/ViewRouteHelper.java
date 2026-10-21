@@ -20,6 +20,7 @@ public class ViewRouteHelper {
 	//PLATO (Responsable)
 	public final static String PLATO_INDEX = "plato/index";
 	public final static String PLATO_NEW = "plato/new";
+	public final static String PLATO_ESTRELLA = "plato/estrella";
 
 	//USER
 	public final static String USER_LOGIN = "user/login";

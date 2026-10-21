@@ -2,6 +2,7 @@ package com.unla.epicentrogourmet.services;
 
 import java.util.List;
 
+import com.unla.epicentrogourmet.dtos.PlatoDTO;
 import com.unla.epicentrogourmet.dtos.PlatoFormDTO;
 import com.unla.epicentrogourmet.dtos.PlatoListadoDTO;
 
@@ -12,4 +13,7 @@ public interface IPlatoService {
 
 	//Platos activos del menu de la unidad, filtrados por uno o varios atributos (todos opcionales)
 	List<PlatoListadoDTO> listar(String mailResponsable, Integer festivalId, String nombre, Double precioMin, Double precioMax);
+
+	//Plato de la unidad que aparecio en mas pedidos en el festival. null si la unidad no tuvo pedidos.
+	PlatoDTO platoEstrella(String mailResponsable, Integer festivalId);
 }
