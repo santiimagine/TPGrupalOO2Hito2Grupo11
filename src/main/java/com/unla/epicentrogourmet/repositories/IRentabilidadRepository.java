@@ -22,4 +22,15 @@ public interface IRentabilidadRepository extends Repository<Pedido, Integer> {
             + "and p.fecha between :desde and :hasta")
     List<Object[]> totales(@Param("unidadId") Integer unidadId, @Param("festivalId") Integer festivalId,
                            @Param("desde") LocalDate desde, @Param("hasta") LocalDate hasta);
+
+    //Una fila por plato vendido: [id del plato, nombre, unidades vendidas, ingresos, costo de produccion]
+    //de la unidad en el festival, con pedidos entre las dos fechas (inclusive).
+    @Query("select i.plato.id, i.plato.nombre, sum(i.cantidad), "
+            + "sum(i.cantidad * i.precioUnitario), sum(i.cantidad * i.plato.costoProduccion) "
+            + "from Pedido p join p.items i "
+            + "where p.unidadVenta.id = :unidadId and p.festival.id = :festivalId "
+            + "and p.fecha between :desde and :hasta "
+            + "group by i.plato.id, i.plato.nombre")
+    List<Object[]> totalesPorPlato(@Param("unidadId") Integer unidadId, @Param("festivalId") Integer festivalId,
+                                   @Param("desde") LocalDate desde, @Param("hasta") LocalDate hasta);
 }

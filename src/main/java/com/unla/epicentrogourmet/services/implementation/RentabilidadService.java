@@ -2,11 +2,14 @@ package com.unla.epicentrogourmet.services.implementation;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.unla.epicentrogourmet.dtos.RentabilidadDTO;
+import com.unla.epicentrogourmet.dtos.RentabilidadPlatoDTO;
 import com.unla.epicentrogourmet.entities.Festival;
 import com.unla.epicentrogourmet.entities.UnidadVenta;
 import com.unla.epicentrogourmet.repositories.IRentabilidadRepository;
@@ -51,7 +54,34 @@ public class RentabilidadService implements IRentabilidadService {
         UnidadVenta unidad = responsableService.traerUnidad(mailResponsable, festivalId);
         Festival festival = unidad.getFestival();
 
-        // Validaciones de carga del rango de fechas
+        validarRango(festival, desde, hasta);
+        return calcular(unidad, desde, hasta);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<RentabilidadPlatoDTO> rentabilidadPorPlato(String mailResponsable, Integer festivalId,
+                                                           LocalDate desde, LocalDate hasta) {
+        UnidadVenta unidad = responsableService.traerUnidad(mailResponsable, festivalId);
+        Festival festival = unidad.getFestival();
+
+        // Sin fechas se usa todo el festival. Con fechas, se validan igual que en la rentabilidad entre fechas.
+        if (desde == null && hasta == null) {
+            desde = festival.getFechaInicio();
+            hasta = festival.getFechaFin();
+        } else {
+            validarRango(festival, desde, hasta);
+        }
+
+        return rentabilidadRepository.totalesPorPlato(unidad.getId(), festival.getId(), desde, hasta).stream()
+                .map(this::toPlatoDTO)
+                .sorted(Comparator.comparingDouble(RentabilidadPlatoDTO::getGanancia).reversed()
+                        .thenComparing(RentabilidadPlatoDTO::getNombrePlato))
+                .toList();
+    }
+
+    // Validaciones de carga del rango de fechas
+    private void validarRango(Festival festival, LocalDate desde, LocalDate hasta) {
         if (desde == null || hasta == null) {
             throw new IllegalArgumentException("Indicá las dos fechas");
         }
@@ -62,7 +92,17 @@ public class RentabilidadService implements IRentabilidadService {
             throw new IllegalArgumentException("Las fechas tienen que estar dentro del festival ("
                     + FECHA.format(festival.getFechaInicio()) + " al " + FECHA.format(festival.getFechaFin()) + ")");
         }
-        return calcular(unidad, desde, hasta);
+    }
+
+    // fila = [id del plato, nombre, unidades vendidas, ingresos, costo de produccion]
+    private RentabilidadPlatoDTO toPlatoDTO(Object[] fila) {
+        RentabilidadPlatoDTO dto = new RentabilidadPlatoDTO();
+        dto.setNombrePlato((String) fila[1]);
+        dto.setUnidadesVendidas(((Number) fila[2]).longValue());
+        dto.setIngresos(((Number) fila[3]).doubleValue());
+        dto.setCosto(((Number) fila[4]).doubleValue());
+        dto.setGanancia(dto.getIngresos() - dto.getCosto());
+        return dto;
     }
 
     //Rentabilidad con los pedidos entre las dos fechas. Los sueldos y el canon se restan completos.

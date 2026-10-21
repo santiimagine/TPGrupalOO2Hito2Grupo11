@@ -24,6 +24,7 @@ public class ViewRouteHelper {
 
 	//RENTABILIDAD (Responsable)
 	public final static String RENTABILIDAD_INDEX = "rentabilidad/index";
+	public final static String RENTABILIDAD_PLATOS = "rentabilidad/platos";
 
 	//USER
 	public final static String USER_LOGIN = "user/login";
