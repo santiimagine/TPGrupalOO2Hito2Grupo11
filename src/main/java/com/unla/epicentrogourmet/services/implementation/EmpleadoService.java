@@ -32,8 +32,7 @@ import com.unla.epicentrogourmet.services.IEmpleadoService;
 import jakarta.transaction.Transactional;
 
 @Service
-public class EmpleadoService
-        implements IEmpleadoService {
+public class EmpleadoService implements IEmpleadoService {
 
     private static final DateTimeFormatter FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -85,7 +84,7 @@ public class EmpleadoService
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No trabajaste en ese festival"));
 
-        // La vista oculta el botón, pero hay que validarlo acá: puede alguien escribir la url a mano.
+        // La vista oculta el botóbn, pero hay que validarlo acá: puede alguien escribir la url a mano.
         if (asignacion.isActivo()) {
             throw new IllegalStateException("El recibo se habilita cuando finaliza el festival");
         }
@@ -184,8 +183,6 @@ public class EmpleadoService
         celda.setPadding(8);
         return celda;
     }
-
-
 
     private AsignacionDTO toAsignacionDTO(UnidadVenta u) {
         Festival f = u.getFestival();

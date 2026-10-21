@@ -39,4 +39,8 @@ public class Caja {
 	private EstadoCaja estado;
 
 	private double montoTotal;
+
+	public boolean estaAbierta() {
+		return this.estado == EstadoCaja.ABIERTA;
+	}
 }
