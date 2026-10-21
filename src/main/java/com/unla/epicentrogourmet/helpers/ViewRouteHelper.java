@@ -22,6 +22,9 @@ public class ViewRouteHelper {
 	public final static String PLATO_NEW = "plato/new";
 	public final static String PLATO_ESTRELLA = "plato/estrella";
 
+	//RENTABILIDAD (Responsable)
+	public final static String RENTABILIDAD_INDEX = "rentabilidad/index";
+
 	//USER
 	public final static String USER_LOGIN = "user/login";
 	public final static String USER_LOGOUT = "user/logout";
