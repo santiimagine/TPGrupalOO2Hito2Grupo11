@@ -85,3 +85,4 @@ Cada actualización del repositorio debe registrarse en la siguiente tabla, indi
 | 20/10/2026 | Responsable: Rentabilidad por plato (ranking de platos por ganancia) | [#15](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/15) | Emanuel Sotelo |
 | 21/10/2026 | Responsable: Modificar plato y baja lógica con reactivación | [#16](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/16) | Emanuel Sotelo |
 | 21/10/2026 | Responsable: Ventas por día | [#17](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/17) | Emanuel Sotelo |
+| 21/10/2026 | Empleado: Cerrar Caja | [#18](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/18) | Santiago Saitz |
