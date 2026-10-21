@@ -23,12 +23,17 @@
         </div>
         <div class="card-body">
             <form class="form-inline" method="get" th:action="@{/responsable/rentabilidad}">
-                <select class="form-control mr-2" name="festivalId">
+                <select class="form-control mr-2 mb-2" name="festivalId">
                     <option th:each="f : ${festivales}" th:value="${f.id}" th:text="${f.nombre}"
                             th:selected="${f.id == festivalId}"></option>
                 </select>
-                <button type="submit" class="btn btn-dark">Calcular</button>
+                <label class="mr-2 mb-2" for="desde">Desde</label>
+                <input type="date" class="form-control mr-2 mb-2" id="desde" name="desde" th:value="${desde}"/>
+                <label class="mr-2 mb-2" for="hasta">Hasta</label>
+                <input type="date" class="form-control mr-2 mb-2" id="hasta" name="hasta" th:value="${hasta}"/>
+                <button type="submit" class="btn btn-dark mb-2">Calcular</button>
             </form>
+            <small class="text-muted">Si dejás las fechas vacías se calcula con todos los pedidos del festival.</small>
         </div>
     </div>
 

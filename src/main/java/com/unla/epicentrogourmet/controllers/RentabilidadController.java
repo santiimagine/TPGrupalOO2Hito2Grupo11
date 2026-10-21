@@ -1,8 +1,10 @@
 package com.unla.epicentrogourmet.controllers;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,15 +31,23 @@ public class RentabilidadController {
 	}
 
 	@GetMapping("")
-	public ModelAndView index(Principal principal, @RequestParam(required = false) Integer festivalId) {
+	public ModelAndView index(Principal principal, @RequestParam(required = false) Integer festivalId,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
 		ModelAndView mAV = new ModelAndView(ViewRouteHelper.RENTABILIDAD_INDEX);
 		List<FestivalDTO> festivales = responsableService.traerFestivales(principal.getName());
 		mAV.addObject("festivales", festivales);
 		Integer elegido = festivalId != null ? festivalId : (festivales.isEmpty() ? null : festivales.get(0).getId());
 		mAV.addObject("festivalId", elegido);
+		mAV.addObject("desde", desde);
+		mAV.addObject("hasta", hasta);
 		if (elegido != null) {
 			try {
-				mAV.addObject("rentabilidad", rentabilidadService.rentabilidadNeta(principal.getName(), elegido));
+				// Sin fechas: rentabilidad de todo el festival. Con fechas: solo los pedidos de ese rango.
+				boolean conFechas = desde != null || hasta != null;
+				mAV.addObject("rentabilidad", conFechas
+						? rentabilidadService.rentabilidadNetaEntreFechas(principal.getName(), elegido, desde, hasta)
+						: rentabilidadService.rentabilidadNeta(principal.getName(), elegido));
 			} catch (IllegalArgumentException e) {
 				mAV.addObject("error", e.getMessage());
 			}
