@@ -54,7 +54,10 @@
     <div class="card" th:if="${platos != null}">
         <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Platos</h5>
-            <a class="btn btn-sm btn-light" th:href="@{/responsable/platos/nuevo(festivalId=${festivalId})}">Agregar plato</a>
+            <div>
+                <a class="btn btn-sm btn-outline-light" th:href="@{/responsable/platos/bajas(festivalId=${festivalId})}">Platos dados de baja</a>
+                <a class="btn btn-sm btn-light" th:href="@{/responsable/platos/nuevo(festivalId=${festivalId})}">Agregar plato</a>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive" th:if="${!platos.isEmpty()}">
@@ -64,6 +67,7 @@
                         <th>Nombre</th>
                         <th class="text-right">Precio de venta</th>
                         <th class="text-right">Costo de producción</th>
+                        <th class="text-right">Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -71,6 +75,14 @@
                         <td th:text="${plato.nombre}"></td>
                         <td class="text-right" th:text="|$ ${#numbers.formatDecimal(plato.precioVenta, 1, 'POINT', 2, 'COMMA')}|"></td>
                         <td class="text-right" th:text="|$ ${#numbers.formatDecimal(plato.costoProduccion, 1, 'POINT', 2, 'COMMA')}|"></td>
+                        <td class="text-right">
+                            <a class="btn btn-sm btn-outline-dark" th:href="@{/responsable/platos/{id}/editar(id=${plato.id},festivalId=${festivalId})}">Editar</a>
+                            <form class="d-inline" method="post" th:action="@{/responsable/platos/{id}/baja(id=${plato.id})}"
+                                  onsubmit="return confirm('¿Dar de baja este plato?');">
+                                <input type="hidden" name="festivalId" th:value="${festivalId}"/>
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Dar de baja</button>
+                            </form>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

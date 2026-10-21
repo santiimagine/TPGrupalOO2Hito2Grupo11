@@ -83,3 +83,4 @@ Cada actualización del repositorio debe registrarse en la siguiente tabla, indi
 | 20/10/2026 | Responsable: Cálculo de Rentabilidad Neta (CU 18) | [#13](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/13) | Emanuel Sotelo |
 | 20/10/2026 | Responsable: Cálculo de Rentabilidad Neta entre dos fechas (CU 19) | [#14](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/14) | Emanuel Sotelo |
 | 20/10/2026 | Responsable: Rentabilidad por plato (ranking de platos por ganancia) | [#15](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/15) | Emanuel Sotelo |
+| 21/10/2026 | Responsable: Modificar plato y baja lógica con reactivación | [#16](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/16) | Emanuel Sotelo |

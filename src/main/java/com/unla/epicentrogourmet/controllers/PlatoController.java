@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -104,5 +105,78 @@ public class PlatoController {
 		mAV.addObject("festivales", festivales);
 		Integer elegido = festivalId != null ? festivalId : (festivales.isEmpty() ? null : festivales.get(0).getId());
 		mAV.addObject("festivalId", elegido);
+	}
+
+	@GetMapping("/{id}/editar")
+	public ModelAndView editar(Principal principal, @PathVariable Integer id, @RequestParam Integer festivalId,
+			RedirectAttributes redirectAttributes) {
+		try {
+			ModelAndView mAV = new ModelAndView(ViewRouteHelper.PLATO_EDIT);
+			mAV.addObject(PLATO_ATTR, platoService.traerParaEditar(principal.getName(), festivalId, id));
+			mAV.addObject("platoId", id);
+			mAV.addObject("festivalId", festivalId);
+			return mAV;
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+			return new ModelAndView("redirect:" + ViewRouteHelper.PLATO_ROOT + "?festivalId=" + festivalId);
+		}
+	}
+
+	@PostMapping("/{id}/modificar")
+	public ModelAndView modificar(Principal principal, @PathVariable Integer id, @RequestParam Integer festivalId,
+			@Valid @ModelAttribute(PLATO_ATTR) PlatoFormDTO plato, BindingResult result,
+			RedirectAttributes redirectAttributes) {
+		ModelAndView mAV = new ModelAndView(ViewRouteHelper.PLATO_EDIT);
+		if (!result.hasErrors()) {
+			try {
+				platoService.modificar(principal.getName(), festivalId, id, plato);
+				redirectAttributes.addFlashAttribute("exito", "El plato se modificó correctamente");
+				return new ModelAndView("redirect:" + ViewRouteHelper.PLATO_ROOT + "?festivalId=" + festivalId);
+			} catch (IllegalArgumentException e) {
+				mAV.addObject("error", e.getMessage());
+			}
+		}
+		mAV.addObject("platoId", id);
+		mAV.addObject("festivalId", festivalId);
+		return mAV;
+	}
+
+	@PostMapping("/{id}/baja")
+	public ModelAndView baja(Principal principal, @PathVariable Integer id, @RequestParam Integer festivalId,
+			RedirectAttributes redirectAttributes) {
+		try {
+			platoService.darDeBaja(principal.getName(), festivalId, id);
+			redirectAttributes.addFlashAttribute("exito", "El plato se dio de baja");
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+		}
+		return new ModelAndView("redirect:" + ViewRouteHelper.PLATO_ROOT + "?festivalId=" + festivalId);
+	}
+
+	@GetMapping("/bajas")
+	public ModelAndView bajas(Principal principal, @RequestParam(required = false) Integer festivalId) {
+		ModelAndView mAV = new ModelAndView(ViewRouteHelper.PLATO_BAJAS);
+		cargarFestivales(mAV, principal.getName(), festivalId);
+		Integer elegido = (Integer) mAV.getModel().get("festivalId");
+		if (elegido != null) {
+			try {
+				mAV.addObject("platos", platoService.listarBajas(principal.getName(), elegido));
+			} catch (IllegalArgumentException e) {
+				mAV.addObject("error", e.getMessage());
+			}
+		}
+		return mAV;
+	}
+
+	@PostMapping("/{id}/reactivar")
+	public ModelAndView reactivar(Principal principal, @PathVariable Integer id, @RequestParam Integer festivalId,
+			RedirectAttributes redirectAttributes) {
+		try {
+			platoService.reactivar(principal.getName(), festivalId, id);
+			redirectAttributes.addFlashAttribute("exito", "El plato se reactivó");
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+		}
+		return new ModelAndView("redirect:" + ViewRouteHelper.PLATO_ROOT + "/bajas?festivalId=" + festivalId);
 	}
 }

@@ -1,6 +1,7 @@
 package com.unla.epicentrogourmet.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -36,4 +37,18 @@ public interface IPlatoRepository extends JpaRepository<Plato, Integer> {
             + "order by count(distinct p.id) desc, sum(i.cantidad) desc, i.plato.nombre asc")
     List<Object[]> platosPorCantidadDePedidos(@Param("unidadId") Integer unidadId,
                                               @Param("festivalId") Integer festivalId);
+
+    //Plato con ese id solo si pertenece al menu de la unidad (asi un responsable no toca platos de otro)
+    @Query("select p from UnidadVenta u join u.platos p where u.id = :unidadId and p.id = :platoId")
+    Optional<Plato> buscarEnUnidad(@Param("unidadId") Integer unidadId, @Param("platoId") Integer platoId);
+
+    //Cantidad de OTROS platos de la unidad con ese nombre (activos o dados de baja), para no repetir nombres al modificar
+    @Query("select count(p) from UnidadVenta u join u.platos p "
+            + "where u.id = :unidadId and lower(p.nombre) = lower(:nombre) and p.id <> :platoId")
+    long contarOtrosPorNombreEnUnidad(@Param("unidadId") Integer unidadId, @Param("nombre") String nombre,
+                                      @Param("platoId") Integer platoId);
+
+    //Platos dados de baja (eliminados logicamente) del menu de la unidad
+    @Query("select p from UnidadVenta u join u.platos p where u.id = :unidadId and p.activo = false order by p.nombre")
+    List<Plato> listarBajas(@Param("unidadId") Integer unidadId);
 }
