@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.unla.epicentrogourmet.dtos.RentabilidadDTO;
 import com.unla.epicentrogourmet.dtos.RentabilidadPlatoDTO;
+import com.unla.epicentrogourmet.dtos.VentaDiariaDTO;
 import com.unla.epicentrogourmet.entities.Festival;
 import com.unla.epicentrogourmet.entities.UnidadVenta;
 import com.unla.epicentrogourmet.repositories.IRentabilidadRepository;
@@ -65,19 +66,44 @@ public class RentabilidadService implements IRentabilidadService {
         UnidadVenta unidad = responsableService.traerUnidad(mailResponsable, festivalId);
         Festival festival = unidad.getFestival();
 
-        // Sin fechas se usa todo el festival. Con fechas, se validan igual que en la rentabilidad entre fechas.
-        if (desde == null && hasta == null) {
-            desde = festival.getFechaInicio();
-            hasta = festival.getFechaFin();
-        } else {
-            validarRango(festival, desde, hasta);
-        }
+        LocalDate[] rango = resolverRango(festival, desde, hasta);
 
-        return rentabilidadRepository.totalesPorPlato(unidad.getId(), festival.getId(), desde, hasta).stream()
+        return rentabilidadRepository.totalesPorPlato(unidad.getId(), festival.getId(), rango[0], rango[1]).stream()
                 .map(this::toPlatoDTO)
                 .sorted(Comparator.comparingDouble(RentabilidadPlatoDTO::getGanancia).reversed()
                         .thenComparing(RentabilidadPlatoDTO::getNombrePlato))
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VentaDiariaDTO> ventasPorDia(String mailResponsable, Integer festivalId,
+                                             LocalDate desde, LocalDate hasta) {
+        UnidadVenta unidad = responsableService.traerUnidad(mailResponsable, festivalId);
+        Festival festival = unidad.getFestival();
+        LocalDate[] rango = resolverRango(festival, desde, hasta);
+
+        return rentabilidadRepository.ventasPorDia(unidad.getId(), festival.getId(), rango[0], rango[1]).stream()
+                .map(this::toVentaDiariaDTO)
+                .toList();
+    }
+
+    // Sin fechas se usa todo el festival. Con fechas, se validan igual que en la rentabilidad entre fechas.
+    private LocalDate[] resolverRango(Festival festival, LocalDate desde, LocalDate hasta) {
+        if (desde == null && hasta == null) {
+            return new LocalDate[] {festival.getFechaInicio(), festival.getFechaFin()};
+        }
+        validarRango(festival, desde, hasta);
+        return new LocalDate[] {desde, hasta};
+    }
+
+    // fila = [fecha, cantidad de pedidos, ingresos]
+    private VentaDiariaDTO toVentaDiariaDTO(Object[] fila) {
+        VentaDiariaDTO dto = new VentaDiariaDTO();
+        dto.setFecha((LocalDate) fila[0]);
+        dto.setCantidadPedidos(((Number) fila[1]).longValue());
+        dto.setIngresos(((Number) fila[2]).doubleValue());
+        return dto;
     }
 
     // Validaciones de carga del rango de fechas

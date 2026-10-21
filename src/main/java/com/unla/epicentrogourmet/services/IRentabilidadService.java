@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.unla.epicentrogourmet.dtos.RentabilidadDTO;
 import com.unla.epicentrogourmet.dtos.RentabilidadPlatoDTO;
+import com.unla.epicentrogourmet.dtos.VentaDiariaDTO;
 
 public interface IRentabilidadService {
 
@@ -20,4 +21,9 @@ public interface IRentabilidadService {
 	//Con las dos fechas en null se usan todos los pedidos del festival; si se indica una sola o el rango es invalido
 	//lanza IllegalArgumentException.
 	List<RentabilidadPlatoDTO> rentabilidadPorPlato(String mailResponsable, Integer festivalId, LocalDate desde, LocalDate hasta);
+
+	//Ventas de la unidad dia por dia (cantidad de pedidos e ingresos), de la fecha mas vieja a la mas nueva.
+	//Solo aparecen los dias con pedidos. Con las dos fechas en null se usa todo el festival; si se indica una sola
+	//o el rango es invalido lanza IllegalArgumentException.
+	List<VentaDiariaDTO> ventasPorDia(String mailResponsable, Integer festivalId, LocalDate desde, LocalDate hasta);
 }
