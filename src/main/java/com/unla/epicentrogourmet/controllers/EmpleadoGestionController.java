@@ -7,10 +7,7 @@ import com.unla.epicentrogourmet.services.IGestionEmpleadoService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -73,6 +70,36 @@ public class EmpleadoGestionController {
 
         return mav;
 
+    }
+
+    @GetMapping("/{id}/edit")
+    public ModelAndView editar(@PathVariable int id, Principal principal, RedirectAttributes redirectAttributes) {
+        try {
+            return formulario(gestionEmpleadoService.traerEmpleadoAModificar(id, principal.getName()), principal);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return new ModelAndView("redirect:" + ViewRouteHelper.EMPLEADOS_ROOT);
+        }
+    }
+
+    @PostMapping("/{id}/update")
+    public ModelAndView actualizar(@PathVariable int id,
+                                   @Valid @ModelAttribute("empleado") EmpleadoFormDTO dto, BindingResult bindingResult,
+                                   Principal principal, RedirectAttributes redirectAttributes) {
+        dto.setId(id);
+        if (bindingResult.hasErrors()) {
+            return formulario(dto, principal);
+        }
+        try {
+            gestionEmpleadoService.modificar(id, dto, principal.getName());
+        } catch (IllegalArgumentException e) {
+            ModelAndView mav = formulario(dto, principal);
+            mav.addObject("error", e.getMessage());
+            return mav;
+        }
+        redirectAttributes.addFlashAttribute("mensaje",
+                "Empleado " + dto.getNombre() + " " + dto.getApellido() + " modificado correctamente");
+        return new ModelAndView("redirect:" + ViewRouteHelper.EMPLEADOS_ROOT);
     }
 
 }

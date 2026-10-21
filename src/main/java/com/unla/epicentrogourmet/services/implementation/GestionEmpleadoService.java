@@ -79,6 +79,8 @@ public class GestionEmpleadoService implements IGestionEmpleadoService {
             throw new IllegalArgumentException("Ya existe un usuario con ese mail.");
         if (empleadoRepository.existsByDni(empleadoFormDTO.getDni()))
             throw new IllegalArgumentException("Ya existe un usuario con ese dni.");
+        if (empleadoFormDTO.getUnidadVentaId() == null)
+            throw new IllegalArgumentException("Debe elegir la unidad de venta.");
 
         UnidadVenta unidadVenta = unidadVentaRepository.findById(empleadoFormDTO.getUnidadVentaId())
                 .orElseThrow(() -> new IllegalArgumentException("La unidad de venta no existe."));
@@ -175,6 +177,85 @@ public class GestionEmpleadoService implements IGestionEmpleadoService {
         }
 
         return contrasenia.toString();
+
+    }
+
+    private Empleado traerPropio (Integer id, String mailResponsable){
+
+        Empleado empleado = empleadoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("El empleado no existe."));
+        if (empleadoRepository.perteneceAResponsable(id, mailResponsable) == 0)
+            throw new IllegalArgumentException("No se puede acceder a empleados que no estén a su cargo.");
+
+        return empleado;
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public EmpleadoFormDTO traerEmpleadoAModificar(Integer id, String mailResponsable){
+
+        Empleado e = traerPropio(id, mailResponsable);
+        if (!e.isActivo())
+            throw new IllegalArgumentException("No se puede editar un empleado inactivo.");
+
+        EmpleadoFormDTO dto = new EmpleadoFormDTO();
+
+        dto.setId(e.getId());
+        dto.setNombre(e.getNombre());
+        dto.setApellido(e.getApellido());
+        dto.setDni(e.getDni());
+        dto.setFechaNacimiento(e.getFechaNacimiento());
+        dto.setFechaIngreso(e.getFechaIngreso());
+        dto.setMail(e.getUsuario().getMail());
+
+        if (e instanceof Cocinero c){
+            dto.setTipoEmpleado(TipoEmpleado.COCINERO);
+            dto.setCategoriaCocina(((Cocinero) e).getCategoria());
+            dto.setEspecialidad(((Cocinero) e).getEspecialidad());
+        } else if (e instanceof Cajero c){
+            dto.setTipoEmpleado(TipoEmpleado.CAJERO);
+            dto.setTurno(((Cajero) e).getTurno());
+        }
+
+        return dto;
+
+    }
+
+    @Override
+    @Transactional
+    public void modificar(Integer id, EmpleadoFormDTO dto, String mailResponsable){
+
+        Empleado e = traerPropio(id, mailResponsable);
+        if (!e.isActivo()) {
+            throw new IllegalArgumentException("No se puede editar un empleado dado de baja.");
+        }
+        if (dto.getFechaNacimiento().plusYears(18).isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("El empleado tiene que ser mayor de edad.");
+        }
+        if (empleadoRepository.existsByDniAndIdNot(dto.getDni(), id)) {
+            throw new IllegalArgumentException("Ya existe otro empleado con ese dni.");
+        }
+
+        e.setNombre(dto.getNombre());
+        e.setApellido(dto.getApellido());
+        e.setDni(dto.getDni());
+        e.setFechaNacimiento(dto.getFechaNacimiento());
+        e.setFechaIngreso(dto.getFechaIngreso());
+
+        if (e instanceof Cocinero c) {
+            if (dto.getCategoriaCocina() == null) {
+                throw new IllegalArgumentException("La categoría es obligatoria para un cocinero");
+            }
+            c.setCategoria(dto.getCategoriaCocina());
+            c.setEspecialidad(dto.getEspecialidad());
+        } else if (e instanceof Cajero c) {
+            if (dto.getTurno() == null) {
+                throw new IllegalArgumentException("El turno es obligatorio para un cajero");
+            }
+            c.setTurno(dto.getTurno());
+        }
+        empleadoRepository.save(e);
 
     }
 

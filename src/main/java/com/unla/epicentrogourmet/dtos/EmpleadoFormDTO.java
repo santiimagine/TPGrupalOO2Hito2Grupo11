@@ -17,6 +17,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class EmpleadoFormDTO {
 
+    private Integer id;
+
     // DATOS PERSONALES:
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
@@ -41,7 +43,7 @@ public class EmpleadoFormDTO {
     @Email(message = "El mail no es válido")
     private String mail;
 
-    @NotNull(message = "Debe elegir la unidad de venta")
+    //@NotNull(message = "Debe elegir la unidad de venta")
     private Integer unidadVentaId;
 
     @NotNull(message = "Debe elegir el tipo de empleado")

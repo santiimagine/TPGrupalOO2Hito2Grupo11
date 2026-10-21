@@ -26,7 +26,13 @@ public interface IEmpleadoRepository extends JpaRepository<Empleado, Integer> {
             "ORDER BY e.apellido, e.nombre")
     List<Empleado> traerActivosPorResponsable(@Param("mail") String mail);
 
+    @Query("SELECT COUNT (u) FROM UnidadVenta u JOIN u.personal e " +
+            "WHERE e.id = :id AND u.responsable.mail = :mail")
+    long perteneceAResponsable(@Param("id") Integer id, @Param("mail") String mail);
+
     boolean existsByDni(String dni);
+
+    boolean existsByDniAndIdNot(String dni, Integer id);
 
 }
 

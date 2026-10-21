@@ -14,6 +14,7 @@
     </div>
 
     <div class="alert alert-success" th:if="${mensaje != null}" th:text="${mensaje}"></div>
+    <div class="alert alert-danger" th:if="${error != null}" th:text="${error}"></div>
 
     <div class="card" th:if="${!empleados.isEmpty()}">
         <div class="card-header bg-dark text-white">
@@ -30,6 +31,7 @@
                         <th>Tipo</th>
                         <th>Categoría / turno</th>
                         <th>Unidades</th>
+                        <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -43,6 +45,16 @@
                             <ul class="mb-0 pl-3">
                                 <li th:each="unidad : ${empleado.unidades}" th:text="${unidad}"></li>
                             </ul>
+                        </td>
+                        <td class="text-nowrap">
+                            <a th:href="@{/responsable/empleados/{id}/edit(id=${empleado.id})}"
+                               class="btn btn-sm btn-outline-primary">Editar</a>
+                            <form th:action="@{/responsable/empleados/{id}/baja(id=${empleado.id})}"
+                                  method="post" class="d-inline"
+                                  th:data-nombre="|${empleado.nombre} ${empleado.apellido}|"
+                                  onsubmit="return confirm('¿Dar de baja a ' + this.dataset.nombre + '?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Dar de baja</button>
+                            </form>
                         </td>
                     </tr>
                     </tbody>

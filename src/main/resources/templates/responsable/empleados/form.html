@@ -6,18 +6,19 @@
 
 <main class="container py-4">
     <div class="page-header">
-        <h2>Nuevo empleado</h2>
+        <h2 th:text="${empleado.id == null} ? 'Nuevo empleado' : 'Editar empleado'">Nuevo empleado</h2>
     </div>
 
     <div class="alert alert-danger" th:if="${error != null}" th:text="${error}"></div>
 
-    <div class="alert alert-warning" th:if="${unidades.isEmpty()}">
+    <div class="alert alert-warning" th:if="${empleado.id == null and unidades.isEmpty()}">
         No tenés unidades de venta en festivales vigentes, así que no podés dar de alta empleados.
     </div>
 
     <div class="card form-card">
         <div class="card-body">
-            <form th:action="@{/responsable/empleados/create}" th:object="${empleado}" method="post">
+            <form th:action="${empleado.id == null} ? @{/responsable/empleados/create} : @{/responsable/empleados/{id}/update(id=${empleado.id})}"
+                  th:object="${empleado}" method="post">
 
                 <h5 class="mb-3">Datos personales</h5>
                 <div class="mb-3">
@@ -47,7 +48,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="mail" class="col-form-label">Mail</label>
-                    <input type="email" class="form-control" id="mail" th:field="*{mail}" placeholder="Ej: empleado@mail.com"/>
+                    <input type="email" class="form-control" id="mail" th:field="*{mail}" th:readonly placeholder="Ej: empleado@mail.com"/>
                     <small class="form-text text-muted">Es su usuario para iniciar sesión. Le llega la contraseña a este mail.</small>
                     <div class="text-danger" th:if="${#fields.hasErrors('mail')}" th:errors="*{mail}"></div>
                 </div>
@@ -55,7 +56,7 @@
                 <hr/>
 
                 <h5 class="mb-3">Puesto</h5>
-                <div class="mb-3">
+                <div class="mb-3" th:if="${empleado.id == null}">
                     <label for="unidadVentaId" class="col-form-label">Unidad de venta</label>
                     <select class="form-control" id="unidadVentaId" th:field="*{unidadVentaId}">
                         <option value="">-- Seleccionar unidad --</option>
@@ -63,7 +64,7 @@
                     </select>
                     <div class="text-danger" th:if="${#fields.hasErrors('unidadVentaId')}" th:errors="*{unidadVentaId}"></div>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" th:if="${empleado.id == null}">
                     <label for="tipo" class="col-form-label">Tipo de empleado</label>
                     <select class="form-control" id="tipo" th:field="*{tipoEmpleado}">
                         <option value="">-- Seleccionar tipo --</option>
@@ -71,6 +72,13 @@
                         <option value="CAJERO">Cajero</option>
                     </select>
                     <div class="text-danger" th:if="${#fields.hasErrors('tipoEmpleado')}" th:errors="*{tipoEmpleado}"></div>
+                </div>
+
+                <div class="mb-3" th:if="${empleado.id != null}">
+                    <label class="col-form-label">Tipo de empleado</label>
+                    <input type="text" class="form-control" readonly
+                           th:value="${empleado.tipoEmpleado.name() == 'COCINERO'} ? 'Cocinero' : 'Cajero'"/>
+                    <input type="hidden" id="tipo" th:field="*{tipoEmpleado}"/>
                 </div>
 
                 <div id="campos-cocinero" style="display: none;">
@@ -100,7 +108,9 @@
                 </div>
 
                 <div class="d-flex">
-                    <button type="submit" class="btn btn-success mr-2" th:disabled="${unidades.isEmpty()}">Dar de alta</button>
+                    <button type="submit" class="btn btn-success mr-2"
+                            th:disabled="${empleado.id == null and unidades.isEmpty()}"
+                            th:text="${empleado.id == null} ? 'Dar de alta' : 'Guardar cambios'">Dar de alta</button>
                     <a th:href="@{/responsable/empleados}" class="btn btn-outline-secondary">Cancelar</a>
                 </div>
             </form>

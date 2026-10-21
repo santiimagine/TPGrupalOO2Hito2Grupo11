@@ -13,4 +13,8 @@ public interface IGestionEmpleadoService {
     Map<Integer, String> traerUnidadesVigentes(String mailResponsable);
     String darDeAlta (EmpleadoFormDTO empleadoFormDTO, String mailResponsable);
 
+    EmpleadoFormDTO traerEmpleadoAModificar(Integer id, String mailResponsable);
+
+    void modificar(Integer id, EmpleadoFormDTO dto, String mailResponsable);
+
 }
