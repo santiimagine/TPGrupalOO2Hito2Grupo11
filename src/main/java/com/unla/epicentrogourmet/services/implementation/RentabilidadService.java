@@ -1,6 +1,7 @@
 package com.unla.epicentrogourmet.services.implementation;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,8 @@ import com.unla.epicentrogourmet.services.IResponsableService;
 
 @Service("rentabilidadService")
 public class RentabilidadService implements IRentabilidadService {
+
+    private static final DateTimeFormatter FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private final IResponsableService responsableService;
 
@@ -39,6 +42,27 @@ public class RentabilidadService implements IRentabilidadService {
         UnidadVenta unidad = responsableService.traerUnidad(mailResponsable, festivalId);
         Festival festival = unidad.getFestival();
         return calcular(unidad, festival.getFechaInicio(), festival.getFechaFin());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RentabilidadDTO rentabilidadNetaEntreFechas(String mailResponsable, Integer festivalId,
+                                                       LocalDate desde, LocalDate hasta) {
+        UnidadVenta unidad = responsableService.traerUnidad(mailResponsable, festivalId);
+        Festival festival = unidad.getFestival();
+
+        // Validaciones de carga del rango de fechas
+        if (desde == null || hasta == null) {
+            throw new IllegalArgumentException("Indicá las dos fechas");
+        }
+        if (desde.isAfter(hasta)) {
+            throw new IllegalArgumentException("La fecha desde no puede ser posterior a la fecha hasta");
+        }
+        if (desde.isBefore(festival.getFechaInicio()) || hasta.isAfter(festival.getFechaFin())) {
+            throw new IllegalArgumentException("Las fechas tienen que estar dentro del festival ("
+                    + FECHA.format(festival.getFechaInicio()) + " al " + FECHA.format(festival.getFechaFin()) + ")");
+        }
+        return calcular(unidad, desde, hasta);
     }
 
     //Rentabilidad con los pedidos entre las dos fechas. Los sueldos y el canon se restan completos.
