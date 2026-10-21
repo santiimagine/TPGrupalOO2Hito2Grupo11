@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<main class="container py-4">
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1>Ventas por día</h1>
+            <p class="mb-4">Cuántos pedidos y cuánto ingresó tu unidad cada día del festival</p>
+        </div>
+    </div>
+
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+    <div class="alert alert-info" th:if="${festivales == null or festivales.isEmpty()}">
+        No tenés unidades de venta registradas.
+    </div>
+
+    <div class="card mb-4" th:if="${festivales != null and !festivales.isEmpty()}">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Festival</h5>
+        </div>
+        <div class="card-body">
+            <form class="form-inline" method="get" th:action="@{/responsable/rentabilidad/ventas}">
+                <select class="form-control mr-2 mb-2" name="festivalId">
+                    <option th:each="f : ${festivales}" th:value="${f.id}" th:text="${f.nombre}"
+                            th:selected="${f.id == festivalId}"></option>
+                </select>
+                <label class="mr-2 mb-2" for="desde">Desde</label>
+                <input type="date" class="form-control mr-2 mb-2" id="desde" name="desde" th:value="${desde}"/>
+                <label class="mr-2 mb-2" for="hasta">Hasta</label>
+                <input type="date" class="form-control mr-2 mb-2" id="hasta" name="hasta" th:value="${hasta}"/>
+                <button type="submit" class="btn btn-dark mb-2">Ver ventas</button>
+            </form>
+            <small class="text-muted">Si dejás las fechas vacías se muestra todo el festival.</small>
+        </div>
+    </div>
+
+    <div class="card" th:if="${dias != null}">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Ventas diarias</h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info mb-0" th:if="${dias.isEmpty()}">
+                Tu unidad no tuvo pedidos en ese período.
+            </div>
+            <div class="table-responsive" th:if="${!dias.isEmpty()}">
+                <table class="table table-striped mb-0">
+                    <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th class="text-right">Pedidos</th>
+                        <th class="text-right">Ingresos</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="d : ${dias}">
+                        <td th:text="${#temporals.format(d.fecha, 'dd/MM/yyyy')}"></td>
+                        <td class="text-right" th:text="${d.cantidadPedidos}"></td>
+                        <td class="text-right" th:text="|$ ${#numbers.formatDecimal(d.ingresos, 1, 'POINT', 2, 'COMMA')}|"></td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr class="font-weight-bold">
+                        <td>Total</td>
+                        <td class="text-right" th:text="${#aggregates.sum(dias.![cantidadPedidos])}"></td>
+                        <td class="text-right" th:text="|$ ${#numbers.formatDecimal(#aggregates.sum(dias.![ingresos]), 1, 'POINT', 2, 'COMMA')}|"></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <small class="text-muted d-block mt-3">
+                Solo aparecen los días con pedidos. Los ingresos se calculan con el precio guardado en cada pedido.
+            </small>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+<div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>
