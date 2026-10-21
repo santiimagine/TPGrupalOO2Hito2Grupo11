@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<main class="container py-4">
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1>Plato estrella</h1>
+            <p class="mb-4">El plato de tu unidad que apareció en más pedidos durante el festival</p>
+        </div>
+    </div>
+
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+    <div class="alert alert-info" th:if="${festivales == null or festivales.isEmpty()}">
+        No tenés unidades de venta registradas.
+    </div>
+
+    <div class="card mb-4" th:if="${festivales != null and !festivales.isEmpty()}">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Festival</h5>
+        </div>
+        <div class="card-body">
+            <form class="form-inline" method="get" th:action="@{/responsable/platos/estrella}">
+                <select class="form-control mr-2" name="festivalId">
+                    <option th:each="f : ${festivales}" th:value="${f.id}" th:text="${f.nombre}"
+                            th:selected="${f.id == festivalId}"></option>
+                </select>
+                <button type="submit" class="btn btn-dark">Ver plato estrella</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card" th:if="${festivales != null and !festivales.isEmpty() and error == null}">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Resultado</h5>
+        </div>
+        <div class="card-body">
+            <div th:if="${platoEstrella != null}">
+                <h3 th:text="${platoEstrella.nombrePlato}"></h3>
+                <p class="mb-1">Precio de venta:
+                    <strong th:text="|$ ${#numbers.formatDecimal(platoEstrella.precioVenta, 1, 'POINT', 2, 'COMMA')}|"></strong></p>
+                <p class="mb-0">Apareció en <strong th:text="${platoEstrella.cantidadPedida}"></strong> pedidos.</p>
+            </div>
+            <div class="alert alert-info mb-0" th:if="${platoEstrella == null}">
+                Tu unidad todavía no tuvo pedidos en este festival.
+            </div>
+            <small class="text-muted d-block mt-3">
+                Se cuenta en cuántos pedidos distintos aparece cada plato. Si dos platos empatan, gana el que vendió más unidades.
+            </small>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+<div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>

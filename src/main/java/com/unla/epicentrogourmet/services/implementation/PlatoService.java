@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.unla.epicentrogourmet.dtos.PlatoDTO;
 import com.unla.epicentrogourmet.dtos.PlatoFormDTO;
 import com.unla.epicentrogourmet.dtos.PlatoListadoDTO;
 import com.unla.epicentrogourmet.entities.Plato;
@@ -69,6 +70,24 @@ public class PlatoService implements IPlatoService {
         return platoRepository.filtrar(unidad.getId(), filtroNombre, precioMin, precioMax).stream()
                 .map(this::toListadoDTO)
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PlatoDTO platoEstrella(String mailResponsable, Integer festivalId) {
+        UnidadVenta unidad = responsableService.traerUnidad(mailResponsable, festivalId);
+
+        // La consulta viene ordenada: la primera fila es el plato que aparecio en mas pedidos
+        List<Object[]> filas = platoRepository.platosPorCantidadDePedidos(unidad.getId(), festivalId);
+        if (filas.isEmpty()) {
+            return null;
+        }
+        Object[] estrella = filas.get(0);
+        PlatoDTO dto = new PlatoDTO();
+        dto.setNombrePlato((String) estrella[1]);
+        dto.setPrecioVenta(((Number) estrella[2]).doubleValue());
+        dto.setCantidadPedida(((Number) estrella[3]).intValue());
+        return dto;
     }
 
     private PlatoListadoDTO toListadoDTO(Plato p) {
