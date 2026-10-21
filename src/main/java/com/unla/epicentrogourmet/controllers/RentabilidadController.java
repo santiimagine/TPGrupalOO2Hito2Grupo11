@@ -54,4 +54,25 @@ public class RentabilidadController {
 		}
 		return mAV;
 	}
+
+	@GetMapping("/platos")
+	public ModelAndView platos(Principal principal, @RequestParam(required = false) Integer festivalId,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+		ModelAndView mAV = new ModelAndView(ViewRouteHelper.RENTABILIDAD_PLATOS);
+		List<FestivalDTO> festivales = responsableService.traerFestivales(principal.getName());
+		mAV.addObject("festivales", festivales);
+		Integer elegido = festivalId != null ? festivalId : (festivales.isEmpty() ? null : festivales.get(0).getId());
+		mAV.addObject("festivalId", elegido);
+		mAV.addObject("desde", desde);
+		mAV.addObject("hasta", hasta);
+		if (elegido != null) {
+			try {
+				mAV.addObject("platos", rentabilidadService.rentabilidadPorPlato(principal.getName(), elegido, desde, hasta));
+			} catch (IllegalArgumentException e) {
+				mAV.addObject("error", e.getMessage());
+			}
+		}
+		return mAV;
+	}
 }
