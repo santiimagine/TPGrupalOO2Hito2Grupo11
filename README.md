@@ -79,3 +79,4 @@ Cada actualización del repositorio debe registrarse en la siguiente tabla, indi
 | 20/10/2026 | Empleado: Liquidación de Haberes y Descargar Recibo de Sueldo | [#9](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/9)  | Santiago Saitz |
 | 20/10/2026 | Responsable: Alta de plato (CU 13) | [#10](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/10) | Emanuel Sotelo |
 | 20/10/2026 | Responsable: Listado y filtrado de platos (CU 14) | [#11](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/11) | Emanuel Sotelo |
+| 20/10/2026 | Responsable: Plato estrella (CU 20) | [#12](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/12) | Emanuel Sotelo |
