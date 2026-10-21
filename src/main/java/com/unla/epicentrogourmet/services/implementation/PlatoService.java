@@ -98,4 +98,88 @@ public class PlatoService implements IPlatoService {
         dto.setCostoProduccion(p.getCostoProduccion());
         return dto;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PlatoFormDTO traerParaEditar(String mailResponsable, Integer festivalId, Integer platoId) {
+        UnidadVenta unidad = responsableService.traerUnidad(mailResponsable, festivalId);
+        Plato plato = traerDeLaUnidad(unidad, platoId);
+        PlatoFormDTO dto = new PlatoFormDTO();
+        dto.setNombre(plato.getNombre());
+        dto.setPrecioVenta(plato.getPrecioVenta());
+        dto.setCostoProduccion(plato.getCostoProduccion());
+        return dto;
+    }
+
+    @Override
+    @Transactional
+    public PlatoListadoDTO modificar(String mailResponsable, Integer festivalId, Integer platoId, PlatoFormDTO dto) {
+        UnidadVenta unidad = responsableService.traerUnidad(mailResponsable, festivalId);
+        validarFestivalVigente(unidad, "modificar platos");
+        Plato plato = traerDeLaUnidad(unidad, platoId);
+
+        // Validacion de carga: un plato dado de baja primero se reactiva
+        if (!plato.isActivo()) {
+            throw new IllegalArgumentException("El plato está dado de baja, reactivalo para poder modificarlo");
+        }
+        // Validacion de carga: el nombre no se repite con otro plato del menu de la unidad
+        String nombre = dto.getNombre().trim();
+        if (platoRepository.contarOtrosPorNombreEnUnidad(unidad.getId(), nombre, platoId) > 0) {
+            throw new IllegalArgumentException("Ya existe otro plato con ese nombre en tu unidad");
+        }
+
+        plato.setNombre(nombre);
+        plato.setPrecioVenta(dto.getPrecioVenta());
+        plato.setCostoProduccion(dto.getCostoProduccion());
+        return toListadoDTO(platoRepository.save(plato));
+    }
+
+    @Override
+    @Transactional
+    public void darDeBaja(String mailResponsable, Integer festivalId, Integer platoId) {
+        UnidadVenta unidad = responsableService.traerUnidad(mailResponsable, festivalId);
+        validarFestivalVigente(unidad, "dar de baja platos");
+        Plato plato = traerDeLaUnidad(unidad, platoId);
+        if (!plato.isActivo()) {
+            throw new IllegalArgumentException("El plato ya está dado de baja");
+        }
+        // Baja logica: se conserva el plato porque los pedidos anteriores lo referencian
+        plato.setActivo(false);
+        platoRepository.save(plato);
+    }
+
+    @Override
+    @Transactional
+    public void reactivar(String mailResponsable, Integer festivalId, Integer platoId) {
+        UnidadVenta unidad = responsableService.traerUnidad(mailResponsable, festivalId);
+        validarFestivalVigente(unidad, "reactivar platos");
+        Plato plato = traerDeLaUnidad(unidad, platoId);
+        if (plato.isActivo()) {
+            throw new IllegalArgumentException("El plato ya está activo");
+        }
+        plato.setActivo(true);
+        platoRepository.save(plato);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PlatoListadoDTO> listarBajas(String mailResponsable, Integer festivalId) {
+        UnidadVenta unidad = responsableService.traerUnidad(mailResponsable, festivalId);
+        return platoRepository.listarBajas(unidad.getId()).stream()
+                .map(this::toListadoDTO)
+                .toList();
+    }
+
+    // Validacion de carga: un festival que ya termino no se toca
+    private void validarFestivalVigente(UnidadVenta unidad, String accion) {
+        if (unidad.getFestival().getFechaFin().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("El festival ya terminó, no se pueden " + accion);
+        }
+    }
+
+    // El plato tiene que estar en el menu de la unidad del responsable
+    private Plato traerDeLaUnidad(UnidadVenta unidad, Integer platoId) {
+        return platoRepository.buscarEnUnidad(unidad.getId(), platoId)
+                .orElseThrow(() -> new IllegalArgumentException("El plato no existe en tu unidad"));
+    }
 }
