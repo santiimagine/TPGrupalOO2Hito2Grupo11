@@ -86,3 +86,4 @@ Cada actualización del repositorio debe registrarse en la siguiente tabla, indi
 | 21/10/2026 | Responsable: Modificar plato y baja lógica con reactivación | [#16](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/16) | Emanuel Sotelo |
 | 21/10/2026 | Responsable: Ventas por día | [#17](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/17) | Emanuel Sotelo |
 | 21/10/2026 | Empleado: Cerrar Caja | [#18](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/18) | Santiago Saitz |
+| 22/10/2026 | Administrador (CU individual): Resumen economico de un festival | [#20](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/20) | Nicolás Campusano |
