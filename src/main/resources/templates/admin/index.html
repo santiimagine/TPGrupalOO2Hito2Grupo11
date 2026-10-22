@@ -37,16 +37,19 @@
                         <td th:text="${festival.temporada}"></td>
                         <td th:text="${#temporals.format(festival.fechaInicio, 'dd/MM/yyyy')}"></td>
                         <td th:text="${#temporals.format(festival.fechaFin, 'dd/MM/yyyy')}"></td>
-                        <td class="text-right">
+                        <td class="text-right text-nowrap">
                             <a class="btn btn-sm btn-outline-dark"
                                th:classappend="${festivalSeleccionado != null and festivalSeleccionado.id == festival.id and vista == 'unidades'} ? 'active'"
-                               th:href="|@{/admin(festivalId=${festival.id},vista='unidades')}#detalle|">Ver unidades</a>
+                               th:href="|@{/admin(festivalId=${festival.id},vista='unidades')}#detalle|">Unidades</a>
                             <a class="btn btn-sm btn-outline-dark"
                                th:classappend="${festivalSeleccionado != null and festivalSeleccionado.id == festival.id and vista == 'ranking'} ? 'active'"
-                               th:href="|@{/admin(festivalId=${festival.id},vista='ranking')}#detalle|">Ver ranking recaudacion</a>
+                               th:href="|@{/admin(festivalId=${festival.id},vista='ranking')}#detalle|">Ranking recaudacion</a>
                             <a class="btn btn-sm btn-outline-dark"
                                th:classappend="${festivalSeleccionado != null and festivalSeleccionado.id == festival.id and vista == 'canon'} ? 'active'"
-                               th:href="|@{/admin(festivalId=${festival.id},vista='canon')}#detalle|">Ver mayor canon</a>
+                               th:href="|@{/admin(festivalId=${festival.id},vista='canon')}#detalle|">Mayor canon</a>
+                            <a class="btn btn-sm btn-outline-dark"
+                               th:classappend="${festivalSeleccionado != null and festivalSeleccionado.id == festival.id and vista == 'resumen'} ? 'active'"
+                               th:href="|@{/admin(festivalId=${festival.id},vista='resumen')}#detalle|">Resumen</a>
                         </td>
                     </tr>
                     </tbody>
@@ -65,6 +68,7 @@
                 <span th:if="${vista == 'unidades'}">Unidades de venta de </span>
                 <span th:if="${vista == 'ranking'}">Ranking de unidades de </span>
                 <span th:if="${vista == 'canon'}">Mayor canon de </span>
+                <span th:if="${vista == 'resumen'}">Resumen economico de </span>
                 <span th:text="${festivalSeleccionado.nombre}"></span>
             </h5>
             <a class="btn btn-sm btn-light" th:href="@{/admin}">Cerrar</a>
@@ -164,6 +168,42 @@
                 </div>
             </div>
 
+            <div th:if="${vista == 'resumen'}">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <small class="text-muted">Unidades de venta</small>
+                                <h4 class="mb-0" th:text="${resumen.cantidadUnidades}"></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <small class="text-muted">Pedidos realizados</small>
+                                <h4 class="mb-0" th:text="${#numbers.formatInteger(resumen.cantidadPedidos, 1, 'POINT')}"></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <small class="text-muted">Canon cobrado por el predio</small>
+                                <h4 class="mb-0" th:text="|$ ${#numbers.formatDecimal(resumen.canonTotal, 1, 'POINT', 2, 'COMMA')}|"></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <small class="text-muted">Recaudación total de las unidades</small>
+                                <h4 class="mb-0" th:text="|$ ${#numbers.formatDecimal(resumen.recaudacionTotal, 1, 'POINT', 2, 'COMMA')}|"></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </main>
