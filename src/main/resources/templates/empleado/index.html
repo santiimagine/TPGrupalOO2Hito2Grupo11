@@ -46,7 +46,7 @@
         </div>
     </div>
 
-     <!-- Cierre de caja: Mensajes de advertencia -->
+    <!-- Cierre de caja: Mensajes de advertencia -->
     <div th:if="${mensaje}" class="alert alert-success mt-4" role="alert" th:text="${mensaje}"></div>
     <div th:if="${error}" class="alert alert-danger mt-4" role="alert" th:text="${error}"></div>
 
@@ -80,7 +80,7 @@
         </div>
     </section>
 
-    <!-- Festivales y unidades de trabajo (con descarga de recibo a la derecha) -->
+    <!-- Festivales y unidades de trabajo (con vista previa del recibo a la derecha) -->
     <section class="mt-5">
         <h2 class="h4 mb-3">Festivales y unidades de trabajo</h2>
 
@@ -100,19 +100,131 @@
                         <span th:text="${#temporals.format(a.fechaFin, 'dd/MM/yyyy')}">03/01/2026</span>
                     </small>
                 </div>
-                <!-- Botón DESCARGAR PDF -->
-                <a th:if="${!a.activo}"
-                   th:href="@{/empleado/festivales/{id}/recibo(id=${a.festivalId})}"
-                   class="btn btn-danger">
-                    Descargar recibo (PDF)
-                </a>
+                <!-- Botón VER PDF: abre la vista previa en un modal, sin salir de la página -->
+                <button th:if="${!a.activo}" type="button" class="btn btn-danger js-ver-pdf"
+                        th:attr="data-url=@{/empleado/festivales/{id}/recibo(id=${a.festivalId})},data-titulo=${a.festival},data-archivo=|recibo-sueldo-festival-${a.festivalId}.pdf|">
+                    Ver PDF
+                </button>
                 <span th:if="${a.activo}" class="text-muted small">Recibo disponible al finalizar</span>
             </li>
         </ul>
     </section>
 </main>
 
+<!-- Modal: vista previa del recibo (PDF). No depende del JavaScript de Bootstrap, solo de su CSS -->
+<div id="modalPdfFondo" class="modal-backdrop show" style="display: none;"></div>
+
+<div id="modalPdf" class="modal" tabindex="-1" role="dialog" aria-modal="true"
+     aria-labelledby="modalPdfTitulo" style="display: none;">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalPdfTitulo">Recibo de sueldo</h5>
+            </div>
+
+            <div class="modal-body p-0 position-relative" style="height: 75vh;">
+                <div id="pdfCargando" class="position-absolute top-50 start-50 translate-middle text-muted">
+                    Cargando recibo...
+                </div>
+                <iframe id="pdfFrame" title="Vista previa del recibo" class="w-100 h-100 border-0 d-none"></iframe>
+                <div id="pdfError" class="alert alert-danger m-3 d-none" role="alert"></div>
+            </div>
+
+            <div class="modal-footer">
+                <a id="pdfDescargar" class="btn btn-danger disabled" role="button" aria-disabled="true">Descargar PDF</a>
+                <button type="button" class="btn btn-secondary js-cerrar-pdf">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <footer th:replace="~{layout :: footer}"></footer>
 <div th:replace="~{layout :: scripts}"></div>
+
+<!-- Vista previa del PDF -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modalEl   = document.getElementById('modalPdf');
+        const fondo     = document.getElementById('modalPdfFondo');
+        const frame     = document.getElementById('pdfFrame');
+        const cargando  = document.getElementById('pdfCargando');
+        const error     = document.getElementById('pdfError');
+        const descargar = document.getElementById('pdfDescargar');
+        const titulo    = document.getElementById('modalPdfTitulo');
+        let urlActual = null;
+        let peticion = 0;   // evita que una respuesta tardía pise a una más nueva
+
+        function abrir() {
+            modalEl.style.display = 'block';
+            fondo.style.display = 'block';
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function limpiar() {
+            peticion++;
+            if (urlActual) { URL.revokeObjectURL(urlActual); urlActual = null; }
+            frame.removeAttribute('src');
+            frame.classList.add('d-none');
+            error.classList.add('d-none');
+            descargar.classList.add('disabled');
+            descargar.setAttribute('aria-disabled', 'true');
+            descargar.removeAttribute('href');
+        }
+
+        function cerrar() {
+            modalEl.style.display = 'none';
+            fondo.style.display = 'none';
+            document.body.classList.remove('overflow-hidden');
+            limpiar();
+        }
+
+        document.querySelectorAll('.js-cerrar-pdf').forEach(function (b) { b.addEventListener('click', cerrar); });
+        // Clic en la zona oscura (fuera de la ventana) y tecla Esc también cierran
+        modalEl.addEventListener('click', function (e) { if (e.target === modalEl) { cerrar(); } });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && modalEl.style.display === 'block') { cerrar(); }
+        });
+
+        document.querySelectorAll('.js-ver-pdf').forEach(function (boton) {
+            boton.addEventListener('click', async function () {
+                limpiar();
+                const miPeticion = peticion;
+                titulo.textContent = 'Recibo de sueldo - ' + boton.dataset.titulo;
+                cargando.classList.remove('d-none');
+                abrir();
+
+                try {
+                    // Mismo GET de siempre; se muestra desde memoria, así la página no cambia
+                    const respuesta = await fetch(boton.dataset.url, { credentials: 'same-origin' });
+                    const tipo = respuesta.headers.get('Content-Type') || '';
+                    if (!respuesta.ok || !tipo.includes('application/pdf')) {
+                        const detalle = (await respuesta.text()).substring(0, 200);
+                        throw new Error(detalle || ('estado ' + respuesta.status));
+                    }
+                    const archivo = await respuesta.blob();
+                    if (miPeticion !== peticion) { return; }   // se cerró la ventana mientras cargaba
+
+                    urlActual = URL.createObjectURL(archivo);
+                    frame.src = urlActual;
+                    frame.classList.remove('d-none');
+
+                    descargar.href = urlActual;
+                    descargar.download = boton.dataset.archivo || 'recibo-sueldo.pdf';
+                    descargar.classList.remove('disabled');
+                    descargar.removeAttribute('aria-disabled');
+                } catch (e) {
+                    console.error('Vista previa del recibo:', e);
+                    if (miPeticion !== peticion) { return; }
+                    error.textContent = 'No se pudo cargar el recibo. ' + e.message;
+                    error.classList.remove('d-none');
+                } finally {
+                    if (miPeticion === peticion) { cargando.classList.add('d-none'); }
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
