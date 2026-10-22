@@ -6,15 +6,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.unla.epicentrogourmet.entities.Caja;
 import com.unla.epicentrogourmet.entities.enums.EstadoCaja;
-import com.unla.epicentrogourmet.repositories.CajaRepository;
 import com.unla.epicentrogourmet.services.ICajaService;
+import com.unla.epicentrogourmet.repositories.ICajaRepository;
 
 @Service
 public class CajaService implements ICajaService {
 
-    private final CajaRepository cajaRepository;
+    private final ICajaRepository cajaRepository;
 
-    public CajaService(CajaRepository cajaRepository) {
+    public CajaService(ICajaRepository cajaRepository) {
         this.cajaRepository = cajaRepository;
     }
 
