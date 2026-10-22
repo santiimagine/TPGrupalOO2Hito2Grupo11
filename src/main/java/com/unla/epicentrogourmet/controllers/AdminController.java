@@ -62,17 +62,27 @@ public class AdminController {
 				.findFirst()
 				.ifPresent(festival -> {
 					modelAndView.addObject("festivalSeleccionado", festival);
-					if ("ranking".equals(vista)) {
-						modelAndView.addObject("vista", "ranking");
-						modelAndView.addObject("ranking", reporteService.rankingPorRecaudacion(festival.getId()));
-					} else if ("canon".equals(vista)) {
-						int x = Math.max(cantidad, 1);
-						modelAndView.addObject("vista", "canon");
-						modelAndView.addObject("cantidad", x);
-						modelAndView.addObject("mayoresCanon", reporteService.mayoresCanon(festival.getId(), x));
-					}else {
-						modelAndView.addObject("vista", "unidades");
-						modelAndView.addObject("unidades", unidadVentaService.traerPorFestival(festival.getId()));
+
+					switch (vista) {
+						case "ranking" -> {
+							modelAndView.addObject("vista", "ranking");
+							modelAndView.addObject("ranking", reporteService.rankingPorRecaudacion(festival.getId()));
+						}
+						case "canon" -> {
+							int x = Math.max(cantidad, 1);
+							modelAndView.addObject("vista", "canon");
+							modelAndView.addObject("cantidad", x);
+							modelAndView.addObject("mayoresCanon", reporteService.mayoresCanon(festival.getId(), x));
+						}
+						case "resumen" -> {
+							modelAndView.addObject("vista", "resumen");
+							modelAndView.addObject("resumen", reporteService.resumenFestival(festival.getId()));
+
+						}
+						default -> {
+							modelAndView.addObject("vista", "unidades");
+							modelAndView.addObject("unidades", unidadVentaService.traerPorFestival(festival.getId()));
+						}
 					}
 				});
 		return modelAndView;

@@ -17,5 +17,8 @@ public interface IPedidoRepository extends JpaRepository<Pedido, Integer> {
             + "group by p.unidadVenta.id")
     List<Object[]> recaudacionPorUnidad(@Param("festivalId") Integer festivalId);
 
+    //Cantidad de pedidos del festival
+    long countByFestivalId(Integer festivalId);
+
 
 }

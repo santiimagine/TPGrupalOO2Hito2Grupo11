@@ -15,6 +15,7 @@ import com.unla.epicentrogourmet.repositories.IPedidoRepository;
 import com.unla.epicentrogourmet.repositories.IUnidadVentaRepository;
 import com.unla.epicentrogourmet.services.IReporteService;
 import com.unla.epicentrogourmet.dtos.ReporteMayoresCanonDTO;
+import com.unla.epicentrogourmet.dtos.ResumenFestivalDTO;
 
 @Service("reporteService")
 public class ReporteService implements IReporteService {
@@ -69,6 +70,19 @@ public class ReporteService implements IReporteService {
         return unidadVentaRepository.findById(unidadVentaId)
                 .orElseThrow(() -> new IllegalArgumentException("La unidad de venta no existe"))
                 .calcularCanon();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResumenFestivalDTO resumenFestival(Integer festivalId) {
+        List<UnidadVenta> unidades = unidadVentaRepository.findByFestivalId(festivalId);
+
+        ResumenFestivalDTO dto = new ResumenFestivalDTO();
+        dto.setCantidadUnidades(unidades.size());
+        dto.setCanonTotal(unidades.stream().mapToDouble(UnidadVenta::calcularCanon).sum());
+        dto.setRecaudacionTotal(recaudacionTotal(festivalId).getRecaudacionTotal());
+        dto.setCantidadPedidos(pedidoRepository.countByFestivalId(festivalId));
+        return dto;
     }
 
     private String tipoDeUnidad(UnidadVenta u) {
