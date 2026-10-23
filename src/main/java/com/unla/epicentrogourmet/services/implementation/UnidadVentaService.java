@@ -2,6 +2,7 @@ package com.unla.epicentrogourmet.services.implementation;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Comparator;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,11 @@ import com.unla.epicentrogourmet.repositories.IUnidadVentaRepository;
 import com.unla.epicentrogourmet.repositories.IUserRolRepository;
 import com.unla.epicentrogourmet.repositories.IUsuarioRepository;
 import com.unla.epicentrogourmet.services.IUnidadVentaService;
+import com.unla.epicentrogourmet.dtos.PersonalDTO;
+import com.unla.epicentrogourmet.entities.Cajero;
+import com.unla.epicentrogourmet.entities.Cocinero;
+import com.unla.epicentrogourmet.entities.Empleado;
+import com.unla.epicentrogourmet.entities.enums.Turno;
 
 @Service("unidadVentaService")
 public class UnidadVentaService implements IUnidadVentaService {
@@ -35,6 +41,7 @@ public class UnidadVentaService implements IUnidadVentaService {
     private final IFestivalRepository festivalRepository;
 
     private final PasswordEncoder passwordEncoder;
+
 
     public UnidadVentaService(IUnidadVentaRepository unidadVentaRepository, IUsuarioRepository usuarioRepository,
                               IUserRolRepository userRolRepository, IFestivalRepository festivalRepository,
@@ -109,6 +116,17 @@ public class UnidadVentaService implements IUnidadVentaService {
                 .toList();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<PersonalDTO> traerPersonal(Integer unidadVentaId) {
+        UnidadVenta unidad = unidadVentaRepository.findById(unidadVentaId)
+                .orElseThrow(() -> new IllegalArgumentException("La unidad de venta no existe"));
+        return unidad.getPersonal().stream()
+                .map(this::toPersonalDTO)
+                .sorted(Comparator.comparing(PersonalDTO::getNombreCompleto))
+                .toList();
+    }
+
     private UnidadVentaDTO toUnidadVentaDTO(UnidadVenta u) {
         UnidadVentaDTO dto = new UnidadVentaDTO();
         dto.setId(u.getId());
@@ -117,6 +135,21 @@ public class UnidadVentaService implements IUnidadVentaService {
         dto.setCodigo(u.getCodigo());
         dto.setSuperficie(u.getSuperficie());
         dto.setResponsableMail(u.getResponsable().getMail());
+        return dto;
+    }
+
+    private PersonalDTO toPersonalDTO(Empleado e) {
+        PersonalDTO dto = new PersonalDTO();
+        dto.setNombreCompleto(e.getApellido() + ", " + e.getNombre());
+        dto.setDni(e.getDni());
+        dto.setActivo(e.isActivo());
+        if (e instanceof Cocinero c) {
+            dto.setPuesto("Cocinero");
+            dto.setDetalle(c.getEspecialidad());
+        } else if (e instanceof Cajero c) {
+            dto.setPuesto("Cajero");
+            dto.setDetalle(c.getTurno() == null ? null : (c.getTurno() == Turno.MANIANA ? "Mañana" : "Noche"));
+        }
         return dto;
     }
 }
