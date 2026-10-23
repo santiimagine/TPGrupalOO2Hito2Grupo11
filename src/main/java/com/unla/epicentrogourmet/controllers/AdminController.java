@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.unla.epicentrogourmet.dtos.FestivalDTO;
+import com.unla.epicentrogourmet.dtos.UnidadVentaDTO;
 import com.unla.epicentrogourmet.helpers.ViewRouteHelper;
 import com.unla.epicentrogourmet.services.IFestivalService;
 import com.unla.epicentrogourmet.services.IUnidadVentaService;
@@ -43,7 +44,8 @@ public class AdminController {
 	@GetMapping("")
 	public ModelAndView index(@RequestParam(required = false) Integer festivalId,
 							  @RequestParam(defaultValue = "unidades") String vista,
-							  @RequestParam(defaultValue = "3") int cantidad) {
+							  @RequestParam(defaultValue = "3") int cantidad,
+							  @RequestParam(required = false) Integer unidadId) {
 		ModelAndView modelAndView = new ModelAndView(ViewRouteHelper.ADMIN_INDEX);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Object principal = authentication != null ? authentication.getPrincipal() : null;
@@ -80,8 +82,18 @@ public class AdminController {
 
 						}
 						default -> {
+							List<UnidadVentaDTO> unidades = unidadVentaService.traerPorFestival(festival.getId());
 							modelAndView.addObject("vista", "unidades");
-							modelAndView.addObject("unidades", unidadVentaService.traerPorFestival(festival.getId()));
+							modelAndView.addObject("unidades", unidades);
+
+							unidades.stream()
+									.filter(unidad -> unidad.getId() .equals(unidadId))
+									.findFirst()
+									.ifPresent(unidad -> {
+										modelAndView.addObject("unidadSeleccionada", unidad);
+										modelAndView.addObject("personal", unidadVentaService.traerPersonal(unidad.getId()));
+									});
+
 						}
 					}
 				});

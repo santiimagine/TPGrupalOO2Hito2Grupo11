@@ -87,4 +87,5 @@ Cada actualización del repositorio debe registrarse en la siguiente tabla, indi
 | 21/10/2026 | Responsable (CU individual): Ventas por día | [#17](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/17) | Emanuel Sotelo |
 | 21/10/2026 | Empleado: Cerrar Caja | [#18](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/18) | Santiago Saitz |
 | 22/10/2026 | Administrador (CU individual): Resumen economico de un festival | [#20](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/20) | Nicolás Campusano |
-| 22/10/2026 | Empleado (CU individual): Recibo de sueldo en PDF con vista previa | [#21](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/21) | Santiago Saitz |
+| 22/10/2026 | Empleado (CU individual): Recibo de sueldo en PDF con vista previa | [#22](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/22) | Santiago Saitz |
+| 23/10/2026 | Administrador (CU individual): Personal de una unidad de venta | [#23](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/23) | Nicolás Campusano |
