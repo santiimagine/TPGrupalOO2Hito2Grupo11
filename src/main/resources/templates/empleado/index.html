@@ -21,21 +21,19 @@
                         <strong>Unidad de venta:</strong>
                         <span class="fw-bold" th:text="${asignacionActual.unidadVenta}">Unidad</span>
                     </p>
+                    <!-- Ver Caja: si es Cajero -->
+                    <th:block th:if="${esCajero and caja != null}">
+                        <button type="button" id="btnVerCaja" class="btn btn-danger w-100 mt-3">
+                            VER CAJA
+                        </button>
 
-                    <!-- Cierre de caja: solo cajero con asignación activa -->
-                    <!-- Caja abierta: se puede cerrar -->
-                    <!-- Luego se marca como cerrada -->
-                    <form th:if="${esCajero and caja != null and caja.estaAbierta()}"
-                          th:action="@{/empleado/caja/{id}/cerrar(id=${caja.id})}" method="post"
-                          class="mt-3" onsubmit="return confirm('¿Cerrar la caja del día?');">
-                        <button type="submit" class="btn btn-danger w-100">Cerrar caja del día</button>
-                    </form>
-
-                    <!-- Caja ya cerrada -->
-                    <div th:if="${esCajero and caja != null and !caja.estaAbierta()}"
-                         class="alert alert-secondary text-center mt-3 mb-0">
-                        La caja se encuentra cerrada
-                    </div>
+                        <!-- Se ve solo si la caja está cerrada; el script lo muestra al cerrarla -->
+                        <div id="cajaCerradaAviso"
+                             class="alert alert-secondary text-center mt-3 mb-0"
+                             th:classappend="${caja.estaAbierta()} ? 'd-none'">
+                            La caja se encuentra cerrada
+                        </div>
+                    </th:block>
                 </div>
             </div>
 
@@ -46,9 +44,6 @@
         </div>
     </div>
 
-    <!-- Cierre de caja: Mensajes de advertencia -->
-    <div th:if="${mensaje}" class="alert alert-success mt-4" role="alert" th:text="${mensaje}"></div>
-    <div th:if="${error}" class="alert alert-danger mt-4" role="alert" th:text="${error}"></div>
 
     <section class="mt-5">
         <h2 class="h4 mb-3">Mi información</h2>
@@ -140,6 +135,71 @@
     </div>
 </div>
 
+<!-- Modal: caja del cajero (mismo estilo que el del PDF) -->
+<th:block th:if="${esCajero and caja != null}">
+    <div id="modalCajaFondo" class="modal-backdrop show" style="display: none;"></div>
+
+    <div id="modalCaja" class="modal" tabindex="-1" role="dialog" aria-modal="true"
+         aria-labelledby="modalCajaTitulo" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCajaTitulo">Mi caja</h5>
+                </div>
+
+                <div class="modal-body">
+                    <dl class="row mb-0">
+                        <dt class="col-5">Fecha</dt>
+                        <dd class="col-7" th:text="${#temporals.format(caja.fecha, 'dd/MM/yyyy')}">01/01/2026</dd>
+
+                        <dt class="col-5">Unidad de venta</dt>
+                        <dd class="col-7" th:text="${caja.unidadVenta.nombreComercial}">Unidad</dd>
+
+                        <dt class="col-5">Cajero</dt>
+                        <dd class="col-7" th:text="${caja.cajero.nombre + ' ' + caja.cajero.apellido}">Nombre Apellido</dd>
+
+                        <dt class="col-5">Monto total</dt>
+                        <dd class="col-7 fw-bold"
+                            th:text="${'$' + #numbers.formatDecimal(caja.montoTotal, 1, 'POINT', 2, 'COMMA')}">$0,00</dd>
+
+                        <dt class="col-5">Estado</dt>
+                        <dd class="col-7">
+                        <span id="cajaEstado" class="badge"
+                              th:classappend="${caja.estaAbierta()} ? 'bg-success' : 'bg-secondary'"
+                              th:text="${caja.estado}">ABIERTA</span>
+                        </dd>
+                    </dl>
+
+                    <div id="cajaAdvertencia" class="alert alert-warning mt-3 mb-0 d-none">
+                        ¿Seguro que querés cerrar la caja?<br>
+                        <strong>¡Esta acción no se puede deshacer!</strong>
+                    </div>
+                    <div id="cajaOk" class="alert alert-success mt-3 mb-0 d-none">
+                        La caja se cerró correctamente.
+                    </div>
+                    <div id="cajaError" class="alert alert-danger mt-3 mb-0 d-none">
+                        No se pudo cerrar la caja. Intentá de nuevo.
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <!-- Formulario vacío: solo para que Thymeleaf agregue el token CSRF -->
+                    <form id="formCerrarCaja" th:if="${caja.estaAbierta()}" class="d-none"
+                          th:action="@{/empleado/caja/{id}/cerrar(id=${caja.id})}" method="post"></form>
+
+                    <button type="button" id="btnCerrarCaja" class="btn btn-danger"
+                            th:if="${caja.estaAbierta()}">Cerrar caja</button>
+                    <button type="button" id="btnConfirmarCierre" class="btn btn-danger d-none">Sí, cerrar caja</button>
+                    <button type="button" id="btnCancelarCierre" class="btn btn-outline-secondary d-none">Cancelar</button>
+                    <button type="button" id="btnCerrarPantalla" class="btn btn-secondary">Cerrar pantalla</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</th:block>
+
 <footer th:replace="~{layout :: footer}"></footer>
 <div th:replace="~{layout :: scripts}"></div>
 
@@ -226,5 +286,97 @@
         });
     });
 </script>
+
+<!-- Vista previa de la caja -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const btnVer  = document.getElementById('btnVerCaja');
+        const modalEl = document.getElementById('modalCaja');
+        const fondo   = document.getElementById('modalCajaFondo');
+        if (!btnVer || !modalEl) { return; }
+
+        const $ = function (id) { return document.getElementById(id); };
+        const form        = $('formCerrarCaja');       // null si la caja ya está cerrada
+        const btnCerrar   = $('btnCerrarCaja');
+        const btnConfirma = $('btnConfirmarCierre');
+        const btnCancela  = $('btnCancelarCierre');
+        const advertencia = $('cajaAdvertencia');
+        const ok          = $('cajaOk');
+        const error       = $('cajaError');
+        const estado      = $('cajaEstado');
+        const avisoCerrada = $('cajaCerradaAviso');
+
+
+        function mostrar(el, visible) { if (el) { el.classList.toggle('d-none', !visible); } }
+
+        function vistaNormal() {
+            mostrar(btnCerrar, true);
+            mostrar(btnConfirma, false);
+            mostrar(btnCancela, false);
+            mostrar(advertencia, false);
+            mostrar(error, false);
+            btnConfirma.disabled = false;
+        }
+
+        function abrir() {
+            modalEl.style.display = 'block';
+            fondo.style.display = 'block';
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function cerrar() {
+            modalEl.style.display = 'none';
+            fondo.style.display = 'none';
+            document.body.classList.remove('overflow-hidden');
+            if (form && ok.classList.contains('d-none')) { vistaNormal(); }
+        }
+
+        btnVer.addEventListener('click', abrir);
+        $('btnCerrarPantalla').addEventListener('click', cerrar);
+        modalEl.addEventListener('click', function (e) { if (e.target === modalEl) { cerrar(); } });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && modalEl.style.display === 'block') { cerrar(); }
+        });
+
+        if (!form || !btnCerrar) { return; }   // caja ya cerrada: solo se muestra
+
+        // "Cerrar caja" muestra la advertencia
+        btnCerrar.addEventListener('click', function () {
+            mostrar(btnCerrar, false);
+            mostrar(btnConfirma, true);
+            mostrar(btnCancela, true);
+            mostrar(advertencia, true);
+            mostrar(error, false);
+        });
+
+        btnCancela.addEventListener('click', vistaNormal);
+
+        // Confirmar: POST sin recargar ni redirigir
+        btnConfirma.addEventListener('click', async function () {
+            btnConfirma.disabled = true;
+            try {
+                const resp = await fetch(form.action, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    body: new URLSearchParams(new FormData(form))   // incluye el token CSRF
+                });
+                if (!resp.ok) { throw new Error('estado ' + resp.status); }
+
+                estado.textContent = 'CERRADA';
+                estado.classList.replace('bg-success', 'bg-secondary');
+                mostrar(btnConfirma, false);
+                mostrar(btnCancela, false);
+                mostrar(advertencia, false);
+                mostrar(ok, true);
+                mostrar(avisoCerrada, true);
+            } catch (e) {
+                console.error('Cerrar caja:', e);
+                mostrar(error, true);
+                btnConfirma.disabled = false;
+            }
+        });
+    });
+</script>
+
 </body>
 </html>
