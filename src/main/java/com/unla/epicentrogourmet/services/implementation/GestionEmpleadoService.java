@@ -10,6 +10,7 @@ import com.unla.epicentrogourmet.repositories.IUnidadVentaRepository;
 import com.unla.epicentrogourmet.repositories.IUserRolRepository;
 import com.unla.epicentrogourmet.repositories.IUsuarioRepository;
 import com.unla.epicentrogourmet.services.IGestionEmpleadoService;
+import com.unla.epicentrogourmet.services.IMailService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,12 +31,15 @@ public class GestionEmpleadoService implements IGestionEmpleadoService {
     private final IUnidadVentaRepository unidadVentaRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public GestionEmpleadoService(IEmpleadoRepository empleadoRepository, IUsuarioRepository usuarioRepository, IUserRolRepository userRolRepository, IUnidadVentaRepository unidadVentaRepository, PasswordEncoder passwordEncoder) {
+    private final IMailService mailService;
+
+    public GestionEmpleadoService(IEmpleadoRepository empleadoRepository, IUsuarioRepository usuarioRepository, IUserRolRepository userRolRepository, IUnidadVentaRepository unidadVentaRepository, PasswordEncoder passwordEncoder, IMailService mailService) {
         this.empleadoRepository = empleadoRepository;
         this.usuarioRepository = usuarioRepository;
         this.userRolRepository = userRolRepository;
         this.unidadVentaRepository = unidadVentaRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mailService = mailService;
     }
 
     @Override
@@ -60,7 +64,7 @@ public class GestionEmpleadoService implements IGestionEmpleadoService {
         Map<Integer, String> opciones = new LinkedHashMap<>();
 
         for (UnidadVenta uv : unidadVentaRepository.findByResponsableMail(mailResponsable)){
-            if (uv.getFestival().getFechaFin().isBefore(LocalDate.now())){
+            if (!uv.getFestival().getFechaFin().isBefore(LocalDate.now())){
                 opciones.put(uv.getId(), uv.getNombreComercial() + " (" + uv.getFestival().getNombre() + ")");
             }
         }
@@ -129,6 +133,8 @@ public class GestionEmpleadoService implements IGestionEmpleadoService {
 
         unidadVenta.getPersonal().add(empleado);
         unidadVentaRepository.save(unidadVenta);
+
+        mailService.enviarMailInicial(empleadoFormDTO.getMail(), empleadoFormDTO.getNombre(), contrasenia);
 
         return contrasenia;
 

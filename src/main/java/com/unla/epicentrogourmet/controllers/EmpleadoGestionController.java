@@ -5,6 +5,7 @@ import com.unla.epicentrogourmet.entities.enums.CategoriaCocina;
 import com.unla.epicentrogourmet.helpers.ViewRouteHelper;
 import com.unla.epicentrogourmet.services.IGestionEmpleadoService;
 import jakarta.validation.Valid;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -51,9 +52,13 @@ public class EmpleadoGestionController {
             ModelAndView mav = formulario(empleadoFormDTO, principal);
             mav.addObject("error", e.getMessage());
             return mav;
+        } catch (MailException e) {
+            ModelAndView mav = formulario(empleadoFormDTO, principal);
+            mav.addObject("error", "No se pudo enviar el mail al empleado, por lo que no se completó el alta.");
+            return mav;
         }
 
-        redirectAttributes.addFlashAttribute("mensaje", "Empleado" + empleadoFormDTO.getNombre() + " " + empleadoFormDTO.getApellido() + " dado de alta correctamente.");
+        redirectAttributes.addFlashAttribute("mensaje", "Empleado " + empleadoFormDTO.getNombre() + " " + empleadoFormDTO.getApellido() + " dado de alta correctamente.");
 
         return new ModelAndView("redirect:" + ViewRouteHelper.EMPLEADOS_ROOT);
 
