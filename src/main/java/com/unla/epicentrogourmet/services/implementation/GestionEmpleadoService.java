@@ -259,4 +259,17 @@ public class GestionEmpleadoService implements IGestionEmpleadoService {
 
     }
 
+    @Override
+    @Transactional
+    public void darDeBaja(Integer id, String mailResponsable) {
+
+        Empleado e = traerPropio(id, mailResponsable);
+        if (!e.isActivo())
+            throw new IllegalArgumentException("El empleado ya está dado de baja.");
+
+        e.setActivo(false);
+        empleadoRepository.save(e);
+
+    }
+
 }

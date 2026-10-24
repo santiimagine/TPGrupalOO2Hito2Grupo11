@@ -102,4 +102,18 @@ public class EmpleadoGestionController {
         return new ModelAndView("redirect:" + ViewRouteHelper.EMPLEADOS_ROOT);
     }
 
+    @PostMapping("/{id}/baja")
+    public ModelAndView darDeBaja(@PathVariable Integer id, Principal principal, RedirectAttributes redirectAttributes){
+
+        try {
+            gestionEmpleadoService.darDeBaja(id, principal.getName());
+            redirectAttributes.addFlashAttribute("mensaje", "Empleado dado de baja correctamente.");
+        } catch (IllegalArgumentException e){
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return new ModelAndView("redirect:" + ViewRouteHelper.EMPLEADOS_ROOT);
+
+    }
+
 }

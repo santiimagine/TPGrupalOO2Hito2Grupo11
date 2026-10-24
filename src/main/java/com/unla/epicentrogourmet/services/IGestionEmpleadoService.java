@@ -17,4 +17,6 @@ public interface IGestionEmpleadoService {
 
     void modificar(Integer id, EmpleadoFormDTO dto, String mailResponsable);
 
+    void darDeBaja(Integer id, String mailResponsable);
+
 }
