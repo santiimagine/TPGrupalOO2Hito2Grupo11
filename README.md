@@ -29,7 +29,7 @@ Requisitos: Java 17, MySQL 8 y un IDE (IntelliJ IDEA). El proyecto usa Maven.
    (Run > Edit Configurations > Environment variables), separadas por punto y coma:
 
    ```
-   DB_URL=jdbc:mysql://localhost:3306/epicentro_gourmet;DB_USERNAME=su_usuario;DB_PASSWORD=su_contraseña
+   DB_URL=jdbc:mysql://localhost:3306/epicentro_gourmet;DB_USERNAME=su_usuario;DB_PASSWORD=su_contraseña;MAIL_USERNAME=usuario_mail;MAIL_PASSWORD=contraseña_mail
    ```
 
 3. **Levantar la aplicación** ejecutando `EpicentroGourmetApplication`
@@ -90,3 +90,4 @@ Cada actualización del repositorio debe registrarse en la siguiente tabla, indi
 | 22/10/2026 | Empleado (CU individual): Recibo de sueldo en PDF (con vista previa)| [#22](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/22) | Santiago Saitz |
 | 23/10/2026 | Administrador (CU individual): Personal de una unidad de venta | [#23](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/23) | Nicolás Campusano |
 | 24/10/2026 | Empleado (CU individual): Cerrar Caja (con vista previa)| [#24](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/24) | Santiago Saitz |
+| 25/10/2026 | Responsable 1 (ABM): Listado, alta con envío de mail, modificación, baja lógica y reactivación de empleados | [#25](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/25) | Francisco Robles Acuña |
