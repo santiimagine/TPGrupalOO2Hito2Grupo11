@@ -12,6 +12,9 @@
       <p class="mb-4">Bienvenido, <span th:text="${username}">responsable</span></p>
     </div>
   </div>
+  <div class="text-center mb-4">
+    <a th:href="@{/responsable/empleados}" class="btn btn-dark">Gestionar empleados</a>
+  </div>
 
   <!-- Platos y reportes de la unidad (Emanuel) -->
   <div th:replace="~{responsable/menu-platos :: menu}"></div>

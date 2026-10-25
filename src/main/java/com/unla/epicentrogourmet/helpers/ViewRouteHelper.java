@@ -13,6 +13,9 @@ public class ViewRouteHelper {
 
 	//EMPLEADO
 	public final static String EMPLEADO_INDEX = "empleado/index";
+	public final static String EMPLEADO_LIST = "responsable/empleados/list";
+	public final static String EMPLEADO_FORM = "responsable/empleados/form";
+	public final static String EMPLEADO_BAJAS = "responsable/empleados/bajas";
 
 	//UNIDAD-VENTA
 	public final static String UNIDADVENTA_NEW = "unidadventa/new";
@@ -40,4 +43,5 @@ public class ViewRouteHelper {
 	public final static String EMPLEADO_ROOT = "/empleado";
 	public final static String PLATO_ROOT = "/responsable/platos";
 	public final static String LOGIN_REGISTRO_OK = "/login?registro=ok";
+	public final static String EMPLEADOS_ROOT = "/responsable/empleados";
 }
