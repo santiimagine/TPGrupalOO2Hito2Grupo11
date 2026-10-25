@@ -19,4 +19,8 @@ public interface IGestionEmpleadoService {
 
     void darDeBaja(Integer id, String mailResponsable);
 
+    List<EmpleadoGestionDTO> traerInactivos(String mailResponsable);
+
+    void reactivar(Integer id, String mailResponsable);
+
 }

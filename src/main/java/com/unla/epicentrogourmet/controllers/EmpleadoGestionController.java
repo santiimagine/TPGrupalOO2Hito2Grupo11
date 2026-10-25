@@ -121,4 +121,31 @@ public class EmpleadoGestionController {
 
     }
 
+    @PostMapping("/{id}/reactivar")
+    public ModelAndView reactivar (@PathVariable Integer id, Principal principal, RedirectAttributes redirectAttributes){
+
+        try {
+            gestionEmpleadoService.reactivar(id, principal.getName());
+            redirectAttributes.addFlashAttribute("mensaje", "Empleado reactivado correctamente.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return new ModelAndView("redirect:" + ViewRouteHelper.EMPLEADOS_ROOT + "/bajas");
+        }
+
+        return new ModelAndView("redirect:" + ViewRouteHelper.EMPLEADOS_ROOT);
+
+    }
+
+    @GetMapping("/bajas")
+    public ModelAndView listarBajas(Principal principal){
+
+        ModelAndView mav = new ModelAndView(ViewRouteHelper.EMPLEADO_BAJAS);
+
+        mav.addObject("username", principal.getName());
+        mav.addObject("empleados", gestionEmpleadoService.traerInactivos(principal.getName()));
+
+        return mav;
+
+    }
+
 }

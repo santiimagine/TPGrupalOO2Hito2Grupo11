@@ -17,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service("gestionEmpleadoService")
 public class GestionEmpleadoService implements IGestionEmpleadoService {
@@ -77,12 +74,16 @@ public class GestionEmpleadoService implements IGestionEmpleadoService {
     @Transactional
     public String darDeAlta(EmpleadoFormDTO empleadoFormDTO, String mailResponsable) {
 
+        Optional<Empleado> existente = empleadoRepository.findByDni(empleadoFormDTO.getDni());
+        if (existente.isPresent()){
+            if (!existente.get().isActivo())
+                throw new IllegalArgumentException("Ese empleado está dado de baja.");
+            throw new IllegalArgumentException("Ya existe un empleado con ese DNI.");
+        }
         if (empleadoFormDTO.getFechaNacimiento().plusYears(18).isAfter(LocalDate.now()))
             throw new IllegalArgumentException("El empleado debe ser mayor de edad.");
         if (usuarioRepository.existsByMail(empleadoFormDTO.getMail()))
             throw new IllegalArgumentException("Ya existe un usuario con ese mail.");
-        if (empleadoRepository.existsByDni(empleadoFormDTO.getDni()))
-            throw new IllegalArgumentException("Ya existe un usuario con ese dni.");
         if (empleadoFormDTO.getUnidadVentaId() == null)
             throw new IllegalArgumentException("Debe elegir la unidad de venta.");
 
@@ -274,6 +275,33 @@ public class GestionEmpleadoService implements IGestionEmpleadoService {
             throw new IllegalArgumentException("El empleado ya está dado de baja.");
 
         e.setActivo(false);
+        empleadoRepository.save(e);
+
+    }
+
+    @Override
+    @Transactional (readOnly = true)
+    public List<EmpleadoGestionDTO> traerInactivos(String mailResponsable) {
+
+        List<EmpleadoGestionDTO> resultado = new ArrayList<>();
+
+        for (Empleado e: empleadoRepository.traerInactivosPorResponsable(mailResponsable)){
+            resultado.add(convertirADto(e, mailResponsable));
+        }
+
+        return resultado;
+
+    }
+
+    @Override
+    @Transactional
+    public void reactivar(Integer id, String mailResponsable) {
+
+        Empleado e = traerPropio(id, mailResponsable);
+        if (e.isActivo())
+            throw new IllegalArgumentException("El empleado ya está activo.");
+
+        e.setActivo(true);
         empleadoRepository.save(e);
 
     }

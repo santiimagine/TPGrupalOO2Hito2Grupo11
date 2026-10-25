@@ -48,7 +48,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="mail" class="col-form-label">Mail</label>
-                    <input type="email" class="form-control" id="mail" th:field="*{mail}" th:readonly placeholder="Ej: empleado@mail.com"/>
+                    <input type="email" class="form-control" id="mail" th:field="*{mail}" th:readonly="${empleado.id != null}" placeholder="Ej: empleado@mail.com"/>
                     <small class="form-text text-muted">Es su usuario para iniciar sesión. Le llega la contraseña a este mail.</small>
                     <div class="text-danger" th:if="${#fields.hasErrors('mail')}" th:errors="*{mail}"></div>
                 </div>
