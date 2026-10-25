@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<main class="container py-4">
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1>Rentabilidad por plato</h1>
+            <p class="mb-4">Cuánto ganó tu unidad con cada plato (ingresos menos costo de producción)</p>
+        </div>
+    </div>
+
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+    <div class="alert alert-info" th:if="${festivales == null or festivales.isEmpty()}">
+        No tenés unidades de venta registradas.
+    </div>
+
+    <div class="card mb-4" th:if="${festivales != null and !festivales.isEmpty()}">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Festival</h5>
+        </div>
+        <div class="card-body">
+            <form class="form-inline" method="get" th:action="@{/responsable/rentabilidad/platos}">
+                <select class="form-control mr-2 mb-2" name="festivalId">
+                    <option th:each="f : ${festivales}" th:value="${f.id}" th:text="${f.nombre}"
+                            th:selected="${f.id == festivalId}"></option>
+                </select>
+                <label class="mr-2 mb-2" for="desde">Desde</label>
+                <input type="date" class="form-control mr-2 mb-2" id="desde" name="desde" th:value="${desde}"/>
+                <label class="mr-2 mb-2" for="hasta">Hasta</label>
+                <input type="date" class="form-control mr-2 mb-2" id="hasta" name="hasta" th:value="${hasta}"/>
+                <button type="submit" class="btn btn-dark mb-2">Calcular</button>
+            </form>
+            <small class="text-muted">Si dejás las fechas vacías se usan todos los pedidos del festival.</small>
+        </div>
+    </div>
+
+    <div class="card" th:if="${platos != null}">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Platos ordenados por ganancia</h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info mb-0" th:if="${platos.isEmpty()}">
+                Tu unidad no vendió platos en ese período.
+            </div>
+            <div class="table-responsive" th:if="${!platos.isEmpty()}">
+                <table class="table table-striped mb-0">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Plato</th>
+                        <th class="text-right">Unidades vendidas</th>
+                        <th class="text-right">Ingresos</th>
+                        <th class="text-right">Costo de producción</th>
+                        <th class="text-right">Ganancia</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p, fila : ${platos}">
+                        <td th:text="${fila.count}"></td>
+                        <td th:text="${p.nombrePlato}"></td>
+                        <td class="text-right" th:text="${p.unidadesVendidas}"></td>
+                        <td class="text-right" th:text="|$ ${#numbers.formatDecimal(p.ingresos, 1, 'POINT', 2, 'COMMA')}|"></td>
+                        <td class="text-right" th:text="|$ ${#numbers.formatDecimal(p.costo, 1, 'POINT', 2, 'COMMA')}|"></td>
+                        <td class="text-right font-weight-bold"
+                            th:classappend="${p.ganancia >= 0} ? 'text-success' : 'text-danger'"
+                            th:text="|$ ${#numbers.formatDecimal(p.ganancia, 1, 'POINT', 2, 'COMMA')}|"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <small class="text-muted d-block mt-3">
+                Ganancia = ingresos por pedidos - costo de producción de los platos vendidos. No incluye sueldos ni canon.
+            </small>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+<div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>

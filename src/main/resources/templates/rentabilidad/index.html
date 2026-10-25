@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<main class="container py-4">
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1>Rentabilidad neta</h1>
+            <p class="mb-4">Ganancia de tu unidad en el festival, después de sueldos y canon</p>
+        </div>
+    </div>
+
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+    <div class="alert alert-info" th:if="${festivales == null or festivales.isEmpty()}">
+        No tenés unidades de venta registradas.
+    </div>
+
+    <div class="card mb-4" th:if="${festivales != null and !festivales.isEmpty()}">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Festival</h5>
+        </div>
+        <div class="card-body">
+            <form class="form-inline" method="get" th:action="@{/responsable/rentabilidad}">
+                <select class="form-control mr-2 mb-2" name="festivalId">
+                    <option th:each="f : ${festivales}" th:value="${f.id}" th:text="${f.nombre}"
+                            th:selected="${f.id == festivalId}"></option>
+                </select>
+                <label class="mr-2 mb-2" for="desde">Desde</label>
+                <input type="date" class="form-control mr-2 mb-2" id="desde" name="desde" th:value="${desde}"/>
+                <label class="mr-2 mb-2" for="hasta">Hasta</label>
+                <input type="date" class="form-control mr-2 mb-2" id="hasta" name="hasta" th:value="${hasta}"/>
+                <button type="submit" class="btn btn-dark mb-2">Calcular</button>
+            </form>
+            <small class="text-muted">Si dejás las fechas vacías se calcula con todos los pedidos del festival.</small>
+        </div>
+    </div>
+
+    <div class="card" th:if="${rentabilidad != null}">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">
+                <span th:text="${rentabilidad.unidadVenta}"></span> en
+                <span th:text="${rentabilidad.festival}"></span>
+            </h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">
+                Pedidos del <span th:text="${#temporals.format(rentabilidad.desde, 'dd/MM/yyyy')}"></span>
+                al <span th:text="${#temporals.format(rentabilidad.hasta, 'dd/MM/yyyy')}"></span>
+                (<span th:text="${rentabilidad.cantidadPedidos}"></span> pedidos).
+            </p>
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <tbody>
+                    <tr>
+                        <td>Ingresos por pedidos</td>
+                        <td class="text-right" th:text="|$ ${#numbers.formatDecimal(rentabilidad.ingresos, 1, 'POINT', 2, 'COMMA')}|"></td>
+                    </tr>
+                    <tr>
+                        <td>(-) Costo de producción de los platos vendidos</td>
+                        <td class="text-right" th:text="|$ ${#numbers.formatDecimal(rentabilidad.costoPlatos, 1, 'POINT', 2, 'COMMA')}|"></td>
+                    </tr>
+                    <tr>
+                        <td>(-) Sueldos del personal (<span th:text="${rentabilidad.cantidadPersonal}"></span> empleados)</td>
+                        <td class="text-right" th:text="|$ ${#numbers.formatDecimal(rentabilidad.sueldos, 1, 'POINT', 2, 'COMMA')}|"></td>
+                    </tr>
+                    <tr>
+                        <td>(-) Canon de la unidad</td>
+                        <td class="text-right" th:text="|$ ${#numbers.formatDecimal(rentabilidad.canon, 1, 'POINT', 2, 'COMMA')}|"></td>
+                    </tr>
+                    <tr class="font-weight-bold">
+                        <td>Rentabilidad neta</td>
+                        <td class="text-right"
+                            th:classappend="${rentabilidad.rentabilidadNeta >= 0} ? 'text-success' : 'text-danger'"
+                            th:text="|$ ${#numbers.formatDecimal(rentabilidad.rentabilidadNeta, 1, 'POINT', 2, 'COMMA')}|"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+<div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.unla.epicentrogourmet.dtos.FestivalDTO;
+import com.unla.epicentrogourmet.dtos.UnidadVentaDTO;
 import com.unla.epicentrogourmet.helpers.ViewRouteHelper;
 import com.unla.epicentrogourmet.services.IFestivalService;
 import com.unla.epicentrogourmet.services.IUnidadVentaService;
@@ -39,10 +40,12 @@ public class AdminController {
 		this.modelMapper = modelMapper;
 	}
 
-	//GET Example: SERVER/admin  o  SERVER/admin?festivalId=1&vista=ranking
+	//GET Example: SERVER/admin  o  SERVER/admin?festivalId=1&vista=ranking o SERVER/admin?festivalId=1&vista=canon&cantidad=3
 	@GetMapping("")
 	public ModelAndView index(@RequestParam(required = false) Integer festivalId,
-							  @RequestParam(defaultValue = "unidades") String vista) {
+							  @RequestParam(defaultValue = "unidades") String vista,
+							  @RequestParam(defaultValue = "3") int cantidad,
+							  @RequestParam(required = false) Integer unidadId) {
 		ModelAndView modelAndView = new ModelAndView(ViewRouteHelper.ADMIN_INDEX);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Object principal = authentication != null ? authentication.getPrincipal() : null;
@@ -61,12 +64,37 @@ public class AdminController {
 				.findFirst()
 				.ifPresent(festival -> {
 					modelAndView.addObject("festivalSeleccionado", festival);
-					if ("ranking".equals(vista)) {
-						modelAndView.addObject("vista", "ranking");
-						modelAndView.addObject("ranking", reporteService.rankingPorRecaudacion(festival.getId()));
-					} else {
-						modelAndView.addObject("vista", "unidades");
-						modelAndView.addObject("unidades", unidadVentaService.traerPorFestival(festival.getId()));
+
+					switch (vista) {
+						case "ranking" -> {
+							modelAndView.addObject("vista", "ranking");
+							modelAndView.addObject("ranking", reporteService.rankingPorRecaudacion(festival.getId()));
+						}
+						case "canon" -> {
+							int x = Math.max(cantidad, 1);
+							modelAndView.addObject("vista", "canon");
+							modelAndView.addObject("cantidad", x);
+							modelAndView.addObject("mayoresCanon", reporteService.mayoresCanon(festival.getId(), x));
+						}
+						case "resumen" -> {
+							modelAndView.addObject("vista", "resumen");
+							modelAndView.addObject("resumen", reporteService.resumenFestival(festival.getId()));
+
+						}
+						default -> {
+							List<UnidadVentaDTO> unidades = unidadVentaService.traerPorFestival(festival.getId());
+							modelAndView.addObject("vista", "unidades");
+							modelAndView.addObject("unidades", unidades);
+
+							unidades.stream()
+									.filter(unidad -> unidad.getId() .equals(unidadId))
+									.findFirst()
+									.ifPresent(unidad -> {
+										modelAndView.addObject("unidadSeleccionada", unidad);
+										modelAndView.addObject("personal", unidadVentaService.traerPersonal(unidad.getId()));
+									});
+
+						}
 					}
 				});
 		return modelAndView;

@@ -6,7 +6,7 @@
 
 <main class="container py-4">
 
-    <!-- Hero: nombre del empleado + asignación actual-->
+    <!-- Hero: nombre del empleado + asignación actual + cierre de caja -->
     <div class="hero-section text-center">
         <div class="container">
             <h1 th:text="${empleado.nombre + ' ' + empleado.apellido}">Nombre Apellido</h1>
@@ -21,6 +21,19 @@
                         <strong>Unidad de venta:</strong>
                         <span class="fw-bold" th:text="${asignacionActual.unidadVenta}">Unidad</span>
                     </p>
+                    <!-- Ver Caja: si es Cajero -->
+                    <th:block th:if="${esCajero and caja != null}">
+                        <button type="button" id="btnVerCaja" class="btn btn-danger w-100 mt-3">
+                            VER CAJA
+                        </button>
+
+                        <!-- Se ve solo si la caja está cerrada; el script lo muestra al cerrarla -->
+                        <div id="cajaCerradaAviso"
+                             class="alert alert-secondary text-center mt-3 mb-0"
+                             th:classappend="${caja.estaAbierta()} ? 'd-none'">
+                            La caja se encuentra cerrada
+                        </div>
+                    </th:block>
                 </div>
             </div>
 
@@ -31,7 +44,7 @@
         </div>
     </div>
 
-    <!-- Mi información (Empleado)-->
+
     <section class="mt-5">
         <h2 class="h4 mb-3">Mi información</h2>
         <div class="card shadow-sm">
@@ -62,7 +75,7 @@
         </div>
     </section>
 
-    <!-- Festivales y unidades de trabajo (con descarga de recibo a la derecha) -->
+    <!-- Festivales y unidades de trabajo (con vista previa del recibo a la derecha) -->
     <section class="mt-5">
         <h2 class="h4 mb-3">Festivales y unidades de trabajo</h2>
 
@@ -82,14 +95,288 @@
                         <span th:text="${#temporals.format(a.fechaFin, 'dd/MM/yyyy')}">03/01/2026</span>
                     </small>
                 </div>
+                <!-- Botón VER PDF: abre la vista previa en un modal, sin salir de la página -->
+                <button th:if="${!a.activo}" type="button" class="btn btn-danger js-ver-pdf"
+                        th:attr="data-url=@{/empleado/festivales/{id}/recibo(id=${a.festivalId})},data-titulo=${a.festival},data-archivo=|recibo-sueldo-festival-${a.festivalId}.pdf|">
+                    Ver PDF
+                </button>
                 <span th:if="${a.activo}" class="text-muted small">Recibo disponible al finalizar</span>
             </li>
         </ul>
     </section>
-
 </main>
+
+<!-- Modal: vista previa del recibo (PDF). No depende del JavaScript de Bootstrap, solo de su CSS -->
+<div id="modalPdfFondo" class="modal-backdrop show" style="display: none;"></div>
+
+<div id="modalPdf" class="modal" tabindex="-1" role="dialog" aria-modal="true"
+     aria-labelledby="modalPdfTitulo" style="display: none;">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalPdfTitulo">Recibo de sueldo</h5>
+            </div>
+
+            <div class="modal-body p-0 position-relative" style="height: 75vh;">
+                <div id="pdfCargando" class="position-absolute top-50 start-50 translate-middle text-muted">
+                    Cargando recibo...
+                </div>
+                <iframe id="pdfFrame" title="Vista previa del recibo" class="w-100 h-100 border-0 d-none"></iframe>
+                <div id="pdfError" class="alert alert-danger m-3 d-none" role="alert"></div>
+            </div>
+
+            <div class="modal-footer">
+                <a id="pdfDescargar" class="btn btn-danger disabled" role="button" aria-disabled="true">Descargar PDF</a>
+                <button type="button" class="btn btn-secondary js-cerrar-pdf">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal: caja del cajero (mismo estilo que el del PDF) -->
+<th:block th:if="${esCajero and caja != null}">
+    <div id="modalCajaFondo" class="modal-backdrop show" style="display: none;"></div>
+
+    <div id="modalCaja" class="modal" tabindex="-1" role="dialog" aria-modal="true"
+         aria-labelledby="modalCajaTitulo" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCajaTitulo">Mi caja</h5>
+                </div>
+
+                <div class="modal-body">
+                    <dl class="row mb-0">
+                        <dt class="col-5">Fecha</dt>
+                        <dd class="col-7" th:text="${#temporals.format(caja.fecha, 'dd/MM/yyyy')}">01/01/2026</dd>
+
+                        <dt class="col-5">Unidad de venta</dt>
+                        <dd class="col-7" th:text="${caja.unidadVenta.nombreComercial}">Unidad</dd>
+
+                        <dt class="col-5">Cajero</dt>
+                        <dd class="col-7" th:text="${caja.cajero.nombre + ' ' + caja.cajero.apellido}">Nombre Apellido</dd>
+
+                        <dt class="col-5">Monto total</dt>
+                        <dd class="col-7 fw-bold"
+                            th:text="${'$' + #numbers.formatDecimal(caja.montoTotal, 1, 'POINT', 2, 'COMMA')}">$0,00</dd>
+
+                        <dt class="col-5">Estado</dt>
+                        <dd class="col-7">
+                        <span id="cajaEstado" class="badge"
+                              th:classappend="${caja.estaAbierta()} ? 'bg-success' : 'bg-secondary'"
+                              th:text="${caja.estado}">ABIERTA</span>
+                        </dd>
+                    </dl>
+
+                    <div id="cajaAdvertencia" class="alert alert-warning mt-3 mb-0 d-none">
+                        ¿Seguro que querés cerrar la caja?<br>
+                        <strong>¡Esta acción no se puede deshacer!</strong>
+                    </div>
+                    <div id="cajaOk" class="alert alert-success mt-3 mb-0 d-none">
+                        La caja se cerró correctamente.
+                    </div>
+                    <div id="cajaError" class="alert alert-danger mt-3 mb-0 d-none">
+                        No se pudo cerrar la caja. Intentá de nuevo.
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <!-- Formulario vacío: solo para que Thymeleaf agregue el token CSRF -->
+                    <form id="formCerrarCaja" th:if="${caja.estaAbierta()}" class="d-none"
+                          th:action="@{/empleado/caja/{id}/cerrar(id=${caja.id})}" method="post"></form>
+
+                    <button type="button" id="btnCerrarCaja" class="btn btn-danger"
+                            th:if="${caja.estaAbierta()}">Cerrar caja</button>
+                    <button type="button" id="btnConfirmarCierre" class="btn btn-danger d-none">Sí, cerrar caja</button>
+                    <button type="button" id="btnCancelarCierre" class="btn btn-outline-secondary d-none">Cancelar</button>
+                    <button type="button" id="btnCerrarPantalla" class="btn btn-secondary">Cerrar pantalla</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</th:block>
 
 <footer th:replace="~{layout :: footer}"></footer>
 <div th:replace="~{layout :: scripts}"></div>
+
+<!-- Vista previa del PDF -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modalEl   = document.getElementById('modalPdf');
+        const fondo     = document.getElementById('modalPdfFondo');
+        const frame     = document.getElementById('pdfFrame');
+        const cargando  = document.getElementById('pdfCargando');
+        const error     = document.getElementById('pdfError');
+        const descargar = document.getElementById('pdfDescargar');
+        const titulo    = document.getElementById('modalPdfTitulo');
+        let urlActual = null;
+        let peticion = 0;   // evita que una respuesta tardía pise a una más nueva
+
+        function abrir() {
+            modalEl.style.display = 'block';
+            fondo.style.display = 'block';
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function limpiar() {
+            peticion++;
+            if (urlActual) { URL.revokeObjectURL(urlActual); urlActual = null; }
+            frame.removeAttribute('src');
+            frame.classList.add('d-none');
+            error.classList.add('d-none');
+            descargar.classList.add('disabled');
+            descargar.setAttribute('aria-disabled', 'true');
+            descargar.removeAttribute('href');
+        }
+
+        function cerrar() {
+            modalEl.style.display = 'none';
+            fondo.style.display = 'none';
+            document.body.classList.remove('overflow-hidden');
+            limpiar();
+        }
+
+        document.querySelectorAll('.js-cerrar-pdf').forEach(function (b) { b.addEventListener('click', cerrar); });
+        // Clic en la zona oscura (fuera de la ventana) y tecla Esc también cierran
+        modalEl.addEventListener('click', function (e) { if (e.target === modalEl) { cerrar(); } });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && modalEl.style.display === 'block') { cerrar(); }
+        });
+
+        document.querySelectorAll('.js-ver-pdf').forEach(function (boton) {
+            boton.addEventListener('click', async function () {
+                limpiar();
+                const miPeticion = peticion;
+                titulo.textContent = 'Recibo de sueldo - ' + boton.dataset.titulo;
+                cargando.classList.remove('d-none');
+                abrir();
+
+                try {
+                    // Mismo GET de siempre; se muestra desde memoria, así la página no cambia
+                    const respuesta = await fetch(boton.dataset.url, { credentials: 'same-origin' });
+                    const tipo = respuesta.headers.get('Content-Type') || '';
+                    if (!respuesta.ok || !tipo.includes('application/pdf')) {
+                        const detalle = (await respuesta.text()).substring(0, 200);
+                        throw new Error(detalle || ('estado ' + respuesta.status));
+                    }
+                    const archivo = await respuesta.blob();
+                    if (miPeticion !== peticion) { return; }   // se cerró la ventana mientras cargaba
+
+                    urlActual = URL.createObjectURL(archivo);
+                    frame.src = urlActual;
+                    frame.classList.remove('d-none');
+
+                    descargar.href = urlActual;
+                    descargar.download = boton.dataset.archivo || 'recibo-sueldo.pdf';
+                    descargar.classList.remove('disabled');
+                    descargar.removeAttribute('aria-disabled');
+                } catch (e) {
+                    console.error('Vista previa del recibo:', e);
+                    if (miPeticion !== peticion) { return; }
+                    error.textContent = 'No se pudo cargar el recibo. ' + e.message;
+                    error.classList.remove('d-none');
+                } finally {
+                    if (miPeticion === peticion) { cargando.classList.add('d-none'); }
+                }
+            });
+        });
+    });
+</script>
+
+<!-- Vista previa de la caja -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const btnVer  = document.getElementById('btnVerCaja');
+        const modalEl = document.getElementById('modalCaja');
+        const fondo   = document.getElementById('modalCajaFondo');
+        if (!btnVer || !modalEl) { return; }
+
+        const $ = function (id) { return document.getElementById(id); };
+        const form        = $('formCerrarCaja');       // null si la caja ya está cerrada
+        const btnCerrar   = $('btnCerrarCaja');
+        const btnConfirma = $('btnConfirmarCierre');
+        const btnCancela  = $('btnCancelarCierre');
+        const advertencia = $('cajaAdvertencia');
+        const ok          = $('cajaOk');
+        const error       = $('cajaError');
+        const estado      = $('cajaEstado');
+        const avisoCerrada = $('cajaCerradaAviso');
+
+
+        function mostrar(el, visible) { if (el) { el.classList.toggle('d-none', !visible); } }
+
+        function vistaNormal() {
+            mostrar(btnCerrar, true);
+            mostrar(btnConfirma, false);
+            mostrar(btnCancela, false);
+            mostrar(advertencia, false);
+            mostrar(error, false);
+            btnConfirma.disabled = false;
+        }
+
+        function abrir() {
+            modalEl.style.display = 'block';
+            fondo.style.display = 'block';
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function cerrar() {
+            modalEl.style.display = 'none';
+            fondo.style.display = 'none';
+            document.body.classList.remove('overflow-hidden');
+            if (form && ok.classList.contains('d-none')) { vistaNormal(); }
+        }
+
+        btnVer.addEventListener('click', abrir);
+        $('btnCerrarPantalla').addEventListener('click', cerrar);
+        modalEl.addEventListener('click', function (e) { if (e.target === modalEl) { cerrar(); } });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && modalEl.style.display === 'block') { cerrar(); }
+        });
+
+        if (!form || !btnCerrar) { return; }   // caja ya cerrada: solo se muestra
+
+        // "Cerrar caja" muestra la advertencia
+        btnCerrar.addEventListener('click', function () {
+            mostrar(btnCerrar, false);
+            mostrar(btnConfirma, true);
+            mostrar(btnCancela, true);
+            mostrar(advertencia, true);
+            mostrar(error, false);
+        });
+
+        btnCancela.addEventListener('click', vistaNormal);
+
+        // Confirmar: POST sin recargar ni redirigir
+        btnConfirma.addEventListener('click', async function () {
+            btnConfirma.disabled = true;
+            try {
+                const resp = await fetch(form.action, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    body: new URLSearchParams(new FormData(form))   // incluye el token CSRF
+                });
+                if (!resp.ok) { throw new Error('estado ' + resp.status); }
+
+                estado.textContent = 'CERRADA';
+                estado.classList.replace('bg-success', 'bg-secondary');
+                mostrar(btnConfirma, false);
+                mostrar(btnCancela, false);
+                mostrar(advertencia, false);
+                mostrar(ok, true);
+                mostrar(avisoCerrada, true);
+            } catch (e) {
+                console.error('Cerrar caja:', e);
+                mostrar(error, true);
+                btnConfirma.disabled = false;
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<main class="container py-4">
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1>Platos de mi unidad</h1>
+            <p class="mb-4">Menú activo de tu unidad de venta en el festival elegido</p>
+        </div>
+    </div>
+
+    <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+    <div class="alert alert-info" th:if="${festivales == null or festivales.isEmpty()}">
+        No tenés unidades de venta registradas.
+    </div>
+
+    <div class="card mb-4" th:if="${festivales != null and !festivales.isEmpty()}">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Filtros</h5>
+        </div>
+        <div class="card-body">
+            <form class="form-row align-items-end" method="get" th:action="@{/responsable/platos}">
+                <div class="form-group col-md-3">
+                    <label for="festivalId">Festival</label>
+                    <select class="form-control" id="festivalId" name="festivalId">
+                        <option th:each="f : ${festivales}" th:value="${f.id}" th:text="${f.nombre}"
+                                th:selected="${f.id == festivalId}"></option>
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="nombre">Nombre contiene</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" th:value="${nombre}"/>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="precioMin">Precio mínimo</label>
+                    <input type="number" step="0.01" min="0" class="form-control" id="precioMin" name="precioMin" th:value="${precioMin}"/>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="precioMax">Precio máximo</label>
+                    <input type="number" step="0.01" min="0" class="form-control" id="precioMax" name="precioMax" th:value="${precioMax}"/>
+                </div>
+                <div class="form-group col-md-2">
+                    <button type="submit" class="btn btn-dark">Filtrar</button>
+                    <a class="btn btn-outline-dark" th:href="@{/responsable/platos(festivalId=${festivalId})}">Limpiar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card" th:if="${platos != null}">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Platos</h5>
+            <div>
+                <a class="btn btn-sm btn-outline-light" th:href="@{/responsable/platos/bajas(festivalId=${festivalId})}">Platos dados de baja</a>
+                <a class="btn btn-sm btn-light" th:href="@{/responsable/platos/nuevo(festivalId=${festivalId})}">Agregar plato</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive" th:if="${!platos.isEmpty()}">
+                <table class="table table-striped table-hover mb-0">
+                    <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th class="text-right">Precio de venta</th>
+                        <th class="text-right">Costo de producción</th>
+                        <th class="text-right">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="plato : ${platos}">
+                        <td th:text="${plato.nombre}"></td>
+                        <td class="text-right" th:text="|$ ${#numbers.formatDecimal(plato.precioVenta, 1, 'POINT', 2, 'COMMA')}|"></td>
+                        <td class="text-right" th:text="|$ ${#numbers.formatDecimal(plato.costoProduccion, 1, 'POINT', 2, 'COMMA')}|"></td>
+                        <td class="text-right">
+                            <a class="btn btn-sm btn-outline-dark" th:href="@{/responsable/platos/{id}/editar(id=${plato.id},festivalId=${festivalId})}">Editar</a>
+                            <form class="d-inline" method="post" th:action="@{/responsable/platos/{id}/baja(id=${plato.id})}"
+                                  onsubmit="return confirm('¿Dar de baja este plato?');">
+                                <input type="hidden" name="festivalId" th:value="${festivalId}"/>
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Dar de baja</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="alert alert-info mb-0" th:if="${platos.isEmpty()}">
+                No hay platos que coincidan con los filtros.
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+<div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Fragmento que se incluye en responsable/index.html: accesos a platos y reportes de la unidad -->
+<div th:fragment="menu" class="card mb-4">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">Platos y reportes de mi unidad</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4 mb-2">
+                <a class="btn btn-outline-dark btn-block" th:href="@{/responsable/platos}">Mis platos</a>
+            </div>
+            <div class="col-md-4 mb-2">
+                <a class="btn btn-outline-dark btn-block" th:href="@{/responsable/platos/nuevo}">Agregar plato</a>
+            </div>
+            <div class="col-md-4 mb-2">
+                <a class="btn btn-outline-dark btn-block" th:href="@{/responsable/platos/estrella}">Plato estrella</a>
+            </div>
+            <div class="col-md-4 mb-2">
+                <a class="btn btn-outline-dark btn-block" th:href="@{/responsable/rentabilidad}">Rentabilidad neta</a>
+            </div>
+            <div class="col-md-4 mb-2">
+                <a class="btn btn-outline-dark btn-block" th:href="@{/responsable/rentabilidad/platos}">Rentabilidad por plato</a>
+            </div>
+            <div class="col-md-4 mb-2">
+                <a class="btn btn-outline-dark btn-block" th:href="@{/responsable/rentabilidad/ventas}">Ventas por día</a>
+            </div>
+            <!-- Los accesos se agregan caso de uso por caso de uso -->
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
