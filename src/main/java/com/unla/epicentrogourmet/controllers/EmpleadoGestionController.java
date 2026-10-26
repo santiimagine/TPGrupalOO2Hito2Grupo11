@@ -1,6 +1,7 @@
 package com.unla.epicentrogourmet.controllers;
 
 import com.unla.epicentrogourmet.dtos.EmpleadoFormDTO;
+import com.unla.epicentrogourmet.dtos.FiltroEmpleadoDTO;
 import com.unla.epicentrogourmet.entities.enums.CategoriaCocina;
 import com.unla.epicentrogourmet.helpers.ViewRouteHelper;
 import com.unla.epicentrogourmet.services.IGestionEmpleadoService;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/responsable/empleados")
@@ -25,11 +27,24 @@ public class EmpleadoGestionController {
     }
 
     @GetMapping("")
-    public ModelAndView listar(Principal principal){
+    public ModelAndView listar(@ModelAttribute("filtro") FiltroEmpleadoDTO filtro, BindingResult bindingResult, Principal principal){
         ModelAndView mav = new ModelAndView(ViewRouteHelper.EMPLEADO_LIST);
 
         mav.addObject("username", principal.getName());
-        mav.addObject("empleados", gestionEmpleadoService.traerActivos(principal.getName()));
+        mav.addObject("unidades", gestionEmpleadoService.traerUnidadesResponsable(principal.getName()));
+
+        if (bindingResult.hasErrors()){
+            mav.addObject("error", "Alguno de los filtros tiene un valor inválido.");
+            mav.addObject("empleados", List.of());
+            return mav;
+        }
+
+        try {
+            mav.addObject("empleados", gestionEmpleadoService.traerActivos(principal.getName(), filtro));
+        } catch (IllegalArgumentException e) {
+            mav.addObject("error", e.getMessage());
+            mav.addObject("empleados", List.of());
+        }
 
         return mav;
     }

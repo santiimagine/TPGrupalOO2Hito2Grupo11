@@ -17,6 +17,46 @@
     <div class="alert alert-success" th:if="${mensaje != null}" th:text="${mensaje}"></div>
     <div class="alert alert-danger" th:if="${error != null}" th:text="${error}"></div>
 
+    <div class="card mb-3">
+        <div class="card-body">
+            <form th:action="@{/responsable/empleados}" th:object="${filtro}" method="get">
+                <div class="form-row">
+                    <div class="col-md-4 mb-2">
+                        <label for="texto" class="col-form-label">Nombre, apellido o DNI</label>
+                        <input type="text" class="form-control" id="texto" th:field="*{texto}" placeholder="Ej: Méndez"/>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label for="unidadVentaId" class="col-form-label">Unidad</label>
+                        <select class="form-control" id="unidadVentaId" th:field="*{unidadVentaId}">
+                            <option value="">Todas</option>
+                            <option th:each="unidad : ${unidades}" th:value="${unidad.key}" th:text="${unidad.value}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label for="tipoEmpleado" class="col-form-label">Tipo</label>
+                        <select class="form-control" id="tipoEmpleado" th:field="*{tipoEmpleado}">
+                            <option value="">Todos</option>
+                            <option value="COCINERO">Cocinero</option>
+                            <option value="CAJERO">Cajero</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label for="fechaDesde" class="col-form-label">Ingresó desde</label>
+                        <input type="date" class="form-control" id="fechaDesde" th:field="*{fechaDesde}"/>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label for="fechaHasta" class="col-form-label">Ingresó hasta</label>
+                        <input type="date" class="form-control" id="fechaHasta" th:field="*{fechaHasta}"/>
+                    </div>
+                    <div class="col-md-4 mb-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary mr-2">Filtrar</button>
+                        <a th:href="@{/responsable/empleados}" class="btn btn-outline-secondary">Limpiar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="card" th:if="${!empleados.isEmpty()}">
         <div class="card-header bg-dark text-white">
             <h5 class="mb-0">Empleados activos</h5>
@@ -63,8 +103,11 @@
             </div>
         </div>
     </div>
-    <div class="alert alert-info" th:if="${empleados.isEmpty()}">
+    <div class="alert alert-info" th:if="${empleados.isEmpty() and filtro.estaVacio()}">
         Todavía no tenés empleados activos.
+    </div>
+    <div class="alert alert-warning" th:if="${empleados.isEmpty() and !filtro.estaVacio()}">
+        Ningún empleado coincide con los filtros.
     </div>
 
     <a th:href="@{/responsable}" class="btn btn-outline-secondary mt-3">Volver al panel</a>

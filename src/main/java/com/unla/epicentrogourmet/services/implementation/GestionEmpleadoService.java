@@ -2,6 +2,7 @@ package com.unla.epicentrogourmet.services.implementation;
 
 import com.unla.epicentrogourmet.dtos.EmpleadoFormDTO;
 import com.unla.epicentrogourmet.dtos.EmpleadoGestionDTO;
+import com.unla.epicentrogourmet.dtos.FiltroEmpleadoDTO;
 import com.unla.epicentrogourmet.entities.*;
 import com.unla.epicentrogourmet.entities.enums.Rol;
 import com.unla.epicentrogourmet.entities.enums.TipoEmpleado;
@@ -41,16 +42,38 @@ public class GestionEmpleadoService implements IGestionEmpleadoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<EmpleadoGestionDTO> traerActivos(String mailResponsable) {
+    public List<EmpleadoGestionDTO> traerActivos(String mailResponsable, FiltroEmpleadoDTO filtro) {
 
-        List<Empleado> empleados = empleadoRepository.traerActivosPorResponsable(mailResponsable);
+        if (filtro.getFechaDesde() != null && filtro.getFechaHasta() != null
+            && filtro.getFechaDesde().isAfter(filtro.getFechaHasta()))
+            throw new IllegalArgumentException("Fecha invalida.");
+
+        String textoBusqueda = null;
+        if (filtro.getTexto() != null && !filtro.getTexto().isBlank())
+            textoBusqueda = "%" + filtro.getTexto().trim().toLowerCase() + "%";
+
+        String tipo = filtro.getTipoEmpleado() == null? null : filtro.getTipoEmpleado().name();
         List<EmpleadoGestionDTO> resultado = new ArrayList<>();
 
-        for (Empleado e: empleados){
+        for (Empleado e: empleadoRepository.filtrarActivosPorResponsable(mailResponsable, textoBusqueda, filtro.getFechaDesde(), filtro.getFechaHasta(), filtro.getUnidadVentaId(), tipo)){
             resultado.add(convertirADto(e, mailResponsable));
         }
 
         return resultado;
+
+    }
+
+    @Override
+    @Transactional
+    public Map<Integer, String> traerUnidadesResponsable(String mailResponsable) {
+
+        Map<Integer, String> opciones = new LinkedHashMap<>();
+
+        for (UnidadVenta uv : unidadVentaRepository.findByResponsableMail(mailResponsable)){
+            opciones.put(uv.getId(), uv.getNombreComercial() + " (" + uv.getFestival().getNombre() +")");
+        }
+
+        return opciones;
 
     }
 
