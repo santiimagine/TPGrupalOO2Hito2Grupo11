@@ -68,26 +68,27 @@ sql/                           Scripts de base de datos
 
 Cada actualización del repositorio debe registrarse en la siguiente tabla, indicando el caso de uso realizado y el responsable.
 
-| Fecha | Caso de uso | PR | Responsable |
-|---|---|---|---|
-| 13/10/2026 | Base del proyecto (entidades, seguridad, página de inicio y script de datos) | [#1](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/1) | Nicolás Campusano |
-| 16/10/2026 | Empleado: Ver información & actualidad| [#2 y #3](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/2) | Santiago Saitz |
-| 16/10/2026 | Registro de unidad de venta con responsable | [#4](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/4) | Nicolás Campusano |
-| 17/10/2026 | Administrador 1 - 2: Ver festivales y unidades de venta de un festival | [#5](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/5) | Nicolás Campusano |
-| 19/10/2026 | Administrador 3: Ranking UnidadesVenta - Responsable 5: Reporte Recaudacion | [#6](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/6) | Nicolás Campusano |
-| 20/10/2026 | Administrador 4: Unidades con Mayor Canon - Responsable 3: Cálculo de Canon | [#7](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/7) | Nicolás Campusano |
-| 20/10/2026 | Empleado: Liquidación de Haberes y Descargar Recibo de Sueldo | [#9](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/9)  | Santiago Saitz |
-| 20/10/2026 | Responsable (Flujo 4): Alta de platos | [#10](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/10) | Emanuel Sotelo |
-| 20/10/2026 | Responsable 2 (filtros): Listado y filtrado de platos | [#11](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/11) | Emanuel Sotelo |
-| 20/10/2026 | Responsable 8: Plato Estrella | [#12](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/12) | Emanuel Sotelo |
-| 20/10/2026 | Responsable 6: Cálculo de Rentabilidad Neta | [#13](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/13) | Emanuel Sotelo |
-| 20/10/2026 | Responsable 7: Cálculo de Rentabilidad Neta entre dos fechas | [#14](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/14) | Emanuel Sotelo |
-| 20/10/2026 | Responsable (CU individual): Rentabilidad por plato (ranking de platos por ganancia) | [#15](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/15) | Emanuel Sotelo |
-| 21/10/2026 | Responsable (CU individual): Modificar plato y baja lógica con reactivación | [#16](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/16) | Emanuel Sotelo |
-| 21/10/2026 | Responsable (CU individual): Ventas por día | [#17](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/17) | Emanuel Sotelo |
-| 21/10/2026 | Empleado: Cerrar Caja | [#18](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/18) | Santiago Saitz |
-| 22/10/2026 | Administrador (CU individual): Resumen economico de un festival | [#20](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/20) | Nicolás Campusano |
-| 22/10/2026 | Empleado (CU individual): Recibo de sueldo en PDF (con vista previa)| [#22](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/22) | Santiago Saitz |
-| 23/10/2026 | Administrador (CU individual): Personal de una unidad de venta | [#23](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/23) | Nicolás Campusano |
-| 24/10/2026 | Empleado (CU individual): Cerrar Caja (con vista previa)| [#24](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/24) | Santiago Saitz |
-| 25/10/2026 | Responsable 1 (ABM): Listado, alta con envío de mail, modificación, baja lógica y reactivación de empleados | [#25](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/25) | Francisco Robles Acuña |
+| Fecha | Caso de uso                                                                                                 | PR                                                                        | Responsable |
+|---|-------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|---|
+| 13/10/2026 | Base del proyecto (entidades, seguridad, página de inicio y script de datos)                                | [#1](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/1)      | Nicolás Campusano |
+| 16/10/2026 | Empleado: Ver información & actualidad                                                                      | [#2 y #3](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/2) | Santiago Saitz |
+| 16/10/2026 | Registro de unidad de venta con responsable                                                                 | [#4](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/4)      | Nicolás Campusano |
+| 17/10/2026 | Administrador 1 - 2: Ver festivales y unidades de venta de un festival                                      | [#5](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/5)      | Nicolás Campusano |
+| 19/10/2026 | Administrador 3: Ranking UnidadesVenta - Responsable 5: Reporte Recaudacion                                 | [#6](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/6)      | Nicolás Campusano |
+| 20/10/2026 | Administrador 4: Unidades con Mayor Canon - Responsable 3: Cálculo de Canon                                 | [#7](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/7)      | Nicolás Campusano |
+| 20/10/2026 | Empleado: Liquidación de Haberes y Descargar Recibo de Sueldo                                               | [#9](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/9)      | Santiago Saitz |
+| 20/10/2026 | Responsable (Flujo 4): Alta de platos                                                                       | [#10](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/10)    | Emanuel Sotelo |
+| 20/10/2026 | Responsable 2 (filtros): Listado y filtrado de platos                                                       | [#11](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/11)    | Emanuel Sotelo |
+| 20/10/2026 | Responsable 8: Plato Estrella                                                                               | [#12](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/12)    | Emanuel Sotelo |
+| 20/10/2026 | Responsable 6: Cálculo de Rentabilidad Neta                                                                 | [#13](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/13)    | Emanuel Sotelo |
+| 20/10/2026 | Responsable 7: Cálculo de Rentabilidad Neta entre dos fechas                                                | [#14](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/14)    | Emanuel Sotelo |
+| 20/10/2026 | Responsable (CU individual): Rentabilidad por plato (ranking de platos por ganancia)                        | [#15](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/15)    | Emanuel Sotelo |
+| 21/10/2026 | Responsable (CU individual): Modificar plato y baja lógica con reactivación                                 | [#16](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/16)    | Emanuel Sotelo |
+| 21/10/2026 | Responsable (CU individual): Ventas por día                                                                 | [#17](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/17)    | Emanuel Sotelo |
+| 21/10/2026 | Empleado: Cerrar Caja                                                                                       | [#18](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/18)    | Santiago Saitz |
+| 22/10/2026 | Administrador (CU individual): Resumen economico de un festival                                             | [#20](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/20)    | Nicolás Campusano |
+| 22/10/2026 | Empleado (CU individual): Recibo de sueldo en PDF (con vista previa)                                        | [#22](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/22)    | Santiago Saitz |
+| 23/10/2026 | Administrador (CU individual): Personal de una unidad de venta                                              | [#23](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/23)    | Nicolás Campusano |
+| 24/10/2026 | Empleado (CU individual): Cerrar Caja (con vista previa)                                                    | [#24](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/24)    | Santiago Saitz |
+| 25/10/2026 | Responsable 1 (ABM): Listado, alta con envío de mail, modificación, baja lógica y reactivación de empleados | [#25](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/25)    | Francisco Robles Acuña |
+| 26/10/2026 | Responsable 2 (filtros): Listado y filtrado de empleados por texto, fecha, tipo o unidad                    | [#26](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/26)    | Francisco Robles Acuña |
