@@ -13,7 +13,7 @@ Orientación a Objetos II - UNLa - 2026
 
 ## Diagrama de clases
 
-(completar: enlace al diagrama de clases)
+[Diagrama_de_clases_HITO2](docs/diagrama/diagrama-clases.png)
 
 ## Cómo correr la aplicación
 
@@ -32,17 +32,23 @@ Requisitos: Java 17, MySQL 8 y un IDE (IntelliJ IDEA). El proyecto usa Maven.
    DB_URL=jdbc:mysql://localhost:3306/epicentro_gourmet;DB_USERNAME=su_usuario;DB_PASSWORD=su_contraseña;MAIL_USERNAME=usuario_mail;MAIL_PASSWORD=contraseña_mail
    ```
 
+   `MAIL_USERNAME` y `MAIL_PASSWORD` son las credenciales de una cuenta de Gmail (la contraseña tiene que ser una *contraseña de aplicación*). Se usan para enviar el mail al dar de alta un empleado.
+   Para solo levantar la aplicación se pueden poner valores cualquiera: arranca igual, pero el alta de empleados no podrá enviar el mail.
+
 3. **Levantar la aplicación** ejecutando `EpicentroGourmetApplication`
    (http://localhost:8080). La primera vez, Hibernate crea las tablas automáticamente.
 
 4. **Cargar los datos iniciales.** Con la aplicación ya levantada una vez, ejecutar en MySQL
-   el script [`sql/epicentro_gourmet_hito2.sql`](sql/epicentro_gourmet_hito2.sql)
-   **una sola vez** (desde la línea `USE epicentro_gourmet;`). Si se ejecuta dos veces, los
-   festivales quedan duplicados y hay que rehacer la base.
+   el script [`sql/epicentro_gourmet_hito2.sql`](sql/epicentro_gourmet_hito2.sql) completo.
+   Se puede ejecutar las veces que haga falta: primero borra todos los datos y los vuelve a cargar (cualquier dato cargado a mano desde la aplicación se pierde).
+   
+5. **Probar el login** con los usuarios que carga el script:
 
-5. **Probar el login** con el administrador precargado:
-   - Mail: `admin@epicentrogourmet.com`
-   - Contraseña: `admin1234`
+   | Rol | Mail | Contraseña |
+   |---|---|---|
+   | Administrador | `admin@epicentrogourmet.com` | `admin1234` |
+   | Responsable | `lucia.fernandez@example.com` | `test1234` |
+   | Empleado (cajero) | `valeria.sosa@example.com` | `test1234` |
 
 Notas:
 - Si alguien cambia una entidad, debe avisar al grupo: `ddl-auto: update` no borra columnas
@@ -62,6 +68,7 @@ src/main/java/com/unla/epicentrogourmet
   services/         Lógica de negocio (IxxxService); las clases están en implementation/
 src/main/resources/templates   Vistas Thymeleaf
 sql/                           Scripts de base de datos
+docs/diagrama/                 Diagrama de clases
 ```
 
 ## Registro de actualizaciones
