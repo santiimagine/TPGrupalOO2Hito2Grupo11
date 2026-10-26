@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -21,10 +22,20 @@ public interface IEmpleadoRepository extends JpaRepository<Empleado, Integer> {
     @Query("SELECT u FROM UnidadVenta u JOIN u.personal p WHERE p.id = :empleadoId")
     Collection<UnidadVenta> traerUnidades(@Param("empleadoId") Integer empleadoId);
 
-    @Query("SELECT DISTINCT e FROM UnidadVenta u JOIN u.personal e "+
-            "WHERE u.responsable.mail = :mail AND e.activo = true " +
+    @Query("SELECT DISTINCT e FROM UnidadVenta u JOIN u.personal e " +
+            "WHERE u.responsable.mail = :mail AND e.activo = true "+
+            "AND (:textoBusqueda IS NULL OR LOWER(CONCAT(e.nombre, ' ',e.apellido)) LIKE :textoBusqueda OR e.dni LIKE :textoBusqueda)"+
+            "AND (:desde IS NULL OR e.fechaIngreso >= :desde) " +
+            "AND (:hasta IS NULL OR e.fechaIngreso <= :hasta) " +
+            "AND (:unidadId IS NULL OR u.id = :unidadId) " +
+            "AND (:tipo IS NULL OR (:tipo = 'COCINERO' AND TYPE(e) = Cocinero) OR (:tipo = 'CAJERO' AND TYPE(e) = Cajero)) "+
             "ORDER BY e.apellido, e.nombre")
-    List<Empleado> traerActivosPorResponsable(@Param("mail") String mail);
+    List<Empleado> filtrarActivosPorResponsable(@Param("mail") String mail,
+                                                @Param("textoBusqueda") String textoBusqueda,
+                                                @Param("desde") LocalDate desde,
+                                                @Param("hasta") LocalDate hasta,
+                                                @Param("unidadId") Integer unidadId,
+                                                @Param("tipo") String tipo);
 
     @Query("SELECT COUNT (u) FROM UnidadVenta u JOIN u.personal e " +
             "WHERE e.id = :id AND u.responsable.mail = :mail")
