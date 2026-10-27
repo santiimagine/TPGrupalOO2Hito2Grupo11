@@ -99,3 +99,4 @@ Cada actualización del repositorio debe registrarse en la siguiente tabla, indi
 | 24/10/2026 | Empleado (CU individual): Cerrar Caja (con vista previa)                                                    | [#24](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/24)    | Santiago Saitz |
 | 25/10/2026 | Responsable 1 (ABM): Listado, alta con envío de mail, modificación, baja lógica y reactivación de empleados | [#25](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/25)    | Francisco Robles Acuña |
 | 26/10/2026 | Responsable 2 (filtros): Listado y filtrado de empleados por texto, fecha, tipo o unidad                    | [#26](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/26)    | Francisco Robles Acuña |
+| 27/10/2026 | Responsable (corrección): Botón Volver al menú en las pantallas de platos y rentabilidad                    | [#28](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/28)    | Emanuel Sotelo         |

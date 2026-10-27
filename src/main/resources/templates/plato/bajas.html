@@ -12,6 +12,10 @@
         </div>
     </div>
 
+    <div class="mb-3 text-right">
+        <a class="btn btn-outline-dark" th:href="@{/responsable}">&larr; Volver al menú</a>
+    </div>
+
     <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
     <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
     <div class="alert alert-info" th:if="${festivales == null or festivales.isEmpty()}">
@@ -36,7 +40,7 @@
     <div class="card" th:if="${platos != null}">
         <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Platos dados de baja</h5>
-            <a class="btn btn-sm btn-light" th:href="@{/responsable/platos(festivalId=${festivalId})}">Volver al menú</a>
+            <a class="btn btn-sm btn-light" th:href="@{/responsable/platos(festivalId=${festivalId})}">Volver a mis platos</a>
         </div>
         <div class="card-body">
             <div class="table-responsive" th:if="${!platos.isEmpty()}">
