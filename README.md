@@ -102,3 +102,4 @@ Cada actualización del repositorio debe registrarse en la siguiente tabla, indi
 | 27/10/2026 | Responsable (corrección): Botón Volver al menú en las pantallas de platos y rentabilidad                    | [#28](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/28)    | Emanuel Sotelo         |
 | 28/10/2026 | Empleado: Alta de pedido (solo cajeros, suma el total a la caja del día) | [#29](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/29)    | Francisco Robles Acuña |
 | 28/10/2026 | Empleado (CU individual): Historial de cajas del cajero | [#30](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/30)    | Francisco Robles Acuña |
+| 28/10/2026 | Empleado (CU individual): Pedidos del día de la unidad del cajero | [#31](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/31)    | Francisco Robles Acuña |
