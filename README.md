@@ -49,6 +49,7 @@ Requisitos: Java 17, MySQL 8 y un IDE (IntelliJ IDEA). El proyecto usa Maven.
    | Administrador | `admin@epicentrogourmet.com` | `admin1234` |
    | Responsable | `lucia.fernandez@example.com` | `test1234` |
    | Empleado (cajero) | `valeria.sosa@example.com` | `test1234` |
+   | Empleado (cocinero) | `gabriela.nunez@example.com | `test1234`
 
 Notas:
 - Si alguien cambia una entidad, debe avisar al grupo: `ddl-auto: update` no borra columnas
