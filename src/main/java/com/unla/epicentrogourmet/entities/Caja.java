@@ -43,4 +43,15 @@ public class Caja {
 	public boolean estaAbierta() {
 		return this.estado == EstadoCaja.ABIERTA;
 	}
+
+	public boolean esDeHoy(){
+		return LocalDate.now().equals(this.fecha);
+	}
+
+	public void registrarVenta(double monto){
+		if (!estaAbierta())
+			throw new IllegalStateException("La caja está cerrada.");
+		setMontoTotal(this.montoTotal + monto);
+	}
+
 }

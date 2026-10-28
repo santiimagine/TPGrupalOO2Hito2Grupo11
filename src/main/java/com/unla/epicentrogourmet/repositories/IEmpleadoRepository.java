@@ -50,5 +50,9 @@ public interface IEmpleadoRepository extends JpaRepository<Empleado, Integer> {
 
     Optional<Empleado> findByDni(String dni);
 
+    @Query("SELECT u FROM UnidadVenta u JOIN u.personal e "+
+            "WHERE e.id = :empleadoId AND :hoy BETWEEN u.festival.fechaInicio AND u.festival.fechaFin")
+    List<UnidadVenta> traerUnidadesEnCurso(@Param("empleadoId") Integer empleadoId, @Param("hoy") LocalDate hoy);
+
 }
 

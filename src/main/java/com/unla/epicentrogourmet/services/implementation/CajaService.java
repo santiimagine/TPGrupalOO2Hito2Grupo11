@@ -1,5 +1,7 @@
 package com.unla.epicentrogourmet.services.implementation;
 
+import com.unla.epicentrogourmet.entities.Cajero;
+import com.unla.epicentrogourmet.entities.UnidadVenta;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +10,8 @@ import com.unla.epicentrogourmet.entities.Caja;
 import com.unla.epicentrogourmet.entities.enums.EstadoCaja;
 import com.unla.epicentrogourmet.services.ICajaService;
 import com.unla.epicentrogourmet.repositories.ICajaRepository;
+
+import java.time.LocalDate;
 
 @Service
 public class CajaService implements ICajaService {
@@ -21,7 +25,7 @@ public class CajaService implements ICajaService {
     @Override
     @Transactional(readOnly = true)
     public Caja traerCajaActual(Integer cajeroId) {
-        return cajaRepository.findFirstByCajeroIdAndEstado(cajeroId, EstadoCaja.ABIERTA)
+        return cajaRepository.findFirstByCajeroIdAndEstadoOrderByFechaDescIdDesc(cajeroId, EstadoCaja.ABIERTA)
                 .or(() -> cajaRepository.findFirstByCajeroIdOrderByFechaDescIdDesc(cajeroId))
                 .orElse(null);
     }
@@ -40,5 +44,27 @@ public class CajaService implements ICajaService {
         }
         caja.setEstado(EstadoCaja.CERRADA);
         cajaRepository.save(caja);
+    }
+
+    @Override
+    @Transactional
+    public Caja traerOAbrirCajaDelDia(Cajero cajero, UnidadVenta unidadVenta) {
+
+        return cajaRepository.findFirstByCajeroIdAndUnidadVentaIdAndFecha(cajero.getId(), unidadVenta.getId(), LocalDate.now())
+                .orElseGet(() -> {
+
+                    for (Caja cajaVieja : cajaRepository.findByCajeroIdAndEstadoAndFechaBefore(cajero.getId(), EstadoCaja.ABIERTA, LocalDate.now())){
+                        cajaVieja.setEstado(EstadoCaja.CERRADA);
+                    }
+
+                    Caja caja = new Caja();
+                    caja.setFecha(LocalDate.now());
+                    caja.setCajero(cajero);
+                    caja.setUnidadVenta(unidadVenta);
+                    caja.setEstado(EstadoCaja.ABIERTA);
+                    caja.setMontoTotal(0);
+                    return cajaRepository.save(caja);
+                });
+
     }
 }
