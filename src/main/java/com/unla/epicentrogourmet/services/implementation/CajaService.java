@@ -1,5 +1,6 @@
 package com.unla.epicentrogourmet.services.implementation;
 
+import com.unla.epicentrogourmet.dtos.CajaDTO;
 import com.unla.epicentrogourmet.entities.Cajero;
 import com.unla.epicentrogourmet.entities.UnidadVenta;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,6 +13,8 @@ import com.unla.epicentrogourmet.services.ICajaService;
 import com.unla.epicentrogourmet.repositories.ICajaRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CajaService implements ICajaService {
@@ -65,6 +68,26 @@ public class CajaService implements ICajaService {
                     caja.setMontoTotal(0);
                     return cajaRepository.save(caja);
                 });
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CajaDTO> traerHistorial(Integer cajeroId) {
+
+        List<CajaDTO> resultado = new ArrayList<>();
+
+        for (Caja caja : cajaRepository.findByCajeroIdOrderByFechaDescIdDesc(cajeroId)){
+            CajaDTO dto = new CajaDTO();
+            dto.setId(caja.getId());
+            dto.setFecha(caja.getFecha());
+            dto.setUnidadVenta(caja.getUnidadVenta().getNombreComercial() + " (" + caja.getUnidadVenta().getFestival().getNombre() + ")");
+            dto.setMontoTotal(caja.getMontoTotal());
+            dto.setEstado(caja.getEstado().name());
+            resultado.add(dto);
+        }
+
+        return resultado;
 
     }
 }

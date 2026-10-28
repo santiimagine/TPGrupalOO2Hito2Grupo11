@@ -46,6 +46,10 @@
             <div th:if="${asignacionActual == null}" class="alert alert-light mx-auto mb-0" style="max-width: 560px;">
                 No tenes asignación en ningún festival activo por el momento.
             </div>
+            <!-- Historial de cajas: solo cajeros -->
+            <div class="text-center mt-3" th:if="${esCajero}">
+                <a th:href="@{/empleado/cajas}" class="btn btn-light">HISTORIAL DE CAJAS</a>
+            </div>
         </div>
     </div>
 

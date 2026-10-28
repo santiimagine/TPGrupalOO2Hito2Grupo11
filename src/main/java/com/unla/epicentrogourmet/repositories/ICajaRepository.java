@@ -21,4 +21,6 @@ public interface ICajaRepository extends JpaRepository<Caja, Integer> {
 
     List<Caja> findByCajeroIdAndEstadoAndFechaBefore(Integer cajeroId, EstadoCaja estado, LocalDate fecha);
 
+    List<Caja> findByCajeroIdOrderByFechaDescIdDesc(Integer cajeroId);
+
 }
