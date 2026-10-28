@@ -21,6 +21,11 @@
                         <strong>Unidad de venta:</strong>
                         <span class="fw-bold" th:text="${asignacionActual.unidadVenta}">Unidad</span>
                     </p>
+                    <!-- Nuevo pedido: solo cajeros con la caja abierta -->
+                    <a th:if="${esCajero and (caja == null or !caja.esDeHoy() or caja.estaAbierta())}"
+                       th:href="@{/empleado/pedidos/new}" class="btn btn-success w-100 mt-3">
+                        NUEVO PEDIDO
+                    </a>
                     <!-- Ver Caja: si es Cajero -->
                     <th:block th:if="${esCajero and caja != null}">
                         <button type="button" id="btnVerCaja" class="btn btn-danger w-100 mt-3">

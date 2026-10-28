@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<main class="container py-4">
+  <div class="page-header">
+    <h2>Nuevo pedido</h2>
+    <p class="text-muted mb-0" th:if="${pedido != null}"
+       th:text="|${pedido.unidadVenta} (${pedido.festival})|">Unidad (Festival)</p>
+  </div>
+
+  <div class="alert alert-success" th:if="${mensaje != null}" th:text="${mensaje}"></div>
+  <div class="alert alert-danger" th:if="${error != null}" th:text="${error}"></div>
+
+  <form th:if="${pedido != null}" th:action="@{/empleado/pedidos/create}" th:object="${pedido}" method="post">
+    <input type="hidden" th:field="*{unidadVenta}"/>
+    <input type="hidden" th:field="*{festival}"/>
+
+    <div class="card mb-3">
+      <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">Menú</h5>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-info mb-0" th:if="${pedido.items.isEmpty()}">
+          Tu unidad no tiene platos activos en el menú.
+        </div>
+        <table class="table table-striped mb-0" th:if="${!pedido.items.isEmpty()}">
+          <thead>
+          <tr>
+            <th>Plato</th>
+            <th>Precio</th>
+            <th style="width: 140px;">Cantidad</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="item, stat : *{items}">
+            <td th:text="${item.nombre}"></td>
+            <td th:text="${'$' + #numbers.formatDecimal(item.precio, 1, 'POINT', 2, 'COMMA')}"></td>
+            <td>
+              <input type="hidden" th:field="*{items[__${stat.index}__].platoId}"/>
+              <input type="hidden" th:field="*{items[__${stat.index}__].nombre}"/>
+              <input type="hidden" th:field="*{items[__${stat.index}__].precio}"/>
+              <input type="number" min="0" max="50" class="form-control cantidad"
+                     th:field="*{items[__${stat.index}__].cantidad}"
+                     th:attr="data-precio=${item.precio}"/>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center mb-3">
+      <h4 class="mb-0 mr-3">Total: $<span id="total">0,00</span></h4>
+    </div>
+
+    <button type="submit" class="btn btn-success mr-2" th:disabled="${pedido.items.isEmpty()}">Registrar pedido</button>
+    <a th:href="@{/empleado}" class="btn btn-outline-secondary">Volver</a>
+  </form>
+
+  <a th:if="${pedido == null}" th:href="@{/empleado}" class="btn btn-outline-secondary">Volver</a>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+<div th:replace="~{layout :: scripts}"></div>
+
+<script>
+    (function () {
+        var inputs = document.querySelectorAll('.cantidad');
+        var total = document.getElementById('total');
+        if (!total) return;
+        function actualizar() {
+            var suma = 0;
+            inputs.forEach(function (i) {
+                suma += (parseInt(i.value) || 0) * parseFloat(i.dataset.precio);
+            });
+            total.textContent = suma.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+        inputs.forEach(function (i) { i.addEventListener('input', actualizar); });
+        actualizar();
+    })();
+</script>
+</body>
+</html>

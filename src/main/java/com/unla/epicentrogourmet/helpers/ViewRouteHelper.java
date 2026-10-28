@@ -32,6 +32,9 @@ public class ViewRouteHelper {
 	public final static String RENTABILIDAD_PLATOS = "rentabilidad/platos";
 	public final static String RENTABILIDAD_VENTAS = "rentabilidad/ventas";
 
+	//PEDIDOS (empleado)
+	public final static String PEDIDO_FORM = "empleado/pedidos/form";
+
 	//USER
 	public final static String USER_LOGIN = "user/login";
 	public final static String USER_LOGOUT = "user/logout";
@@ -44,4 +47,5 @@ public class ViewRouteHelper {
 	public final static String PLATO_ROOT = "/responsable/platos";
 	public final static String LOGIN_REGISTRO_OK = "/login?registro=ok";
 	public final static String EMPLEADOS_ROOT = "/responsable/empleados";
+	public final static String PEDIDO_NEW = "/empleado/pedidos/new";
 }
