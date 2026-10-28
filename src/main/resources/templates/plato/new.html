@@ -12,6 +12,10 @@
         </div>
     </div>
 
+    <div class="mb-3 text-right">
+        <a class="btn btn-outline-dark" th:href="@{/responsable}">&larr; Volver al menú</a>
+    </div>
+
     <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
     <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
     <div class="alert alert-info" th:if="${festivales == null or festivales.isEmpty()}">
@@ -47,7 +51,7 @@
                     <small class="text-danger" th:if="${#fields.hasErrors('costoProduccion')}" th:errors="*{costoProduccion}"></small>
                 </div>
                 <button type="submit" class="btn btn-dark">Agregar plato</button>
-                <a class="btn btn-outline-dark" th:href="@{/responsable}">Volver</a>
+                <a class="btn btn-outline-dark" th:href="@{/responsable/platos(festivalId=${festivalId})}">Volver a mis platos</a>
             </form>
         </div>
     </div>
