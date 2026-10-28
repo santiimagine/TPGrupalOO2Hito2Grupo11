@@ -17,6 +17,7 @@ public class ViewRouteHelper {
 	public final static String EMPLEADO_FORM = "responsable/empleados/form";
 	public final static String EMPLEADO_BAJAS = "responsable/empleados/bajas";
 	public final static String CAJA_HISTORIAL = "empleado/cajas/historial";
+	public final static String PEDIDO_HOY = "empleado/pedidos/hoy";
 
 	//UNIDAD-VENTA
 	public final static String UNIDADVENTA_NEW = "unidadventa/new";

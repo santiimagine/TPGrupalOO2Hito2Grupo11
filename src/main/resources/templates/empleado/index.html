@@ -26,6 +26,11 @@
                        th:href="@{/empleado/pedidos/new}" class="btn btn-success w-100 mt-3">
                         NUEVO PEDIDO
                     </a>
+                    <!-- Pedidos de hoy: solo cajeros, aunque la caja esté cerrada -->
+                    <a th:if="${esCajero}" th:href="@{/empleado/pedidos/hoy}"
+                       class="btn btn-outline-secondary w-100 mt-2">
+                        PEDIDOS DE HOY
+                    </a>
                     <!-- Ver Caja: si es Cajero -->
                     <th:block th:if="${esCajero and caja != null}">
                         <button type="button" id="btnVerCaja" class="btn btn-danger w-100 mt-3">
