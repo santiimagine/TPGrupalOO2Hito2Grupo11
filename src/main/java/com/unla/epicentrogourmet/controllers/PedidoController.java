@@ -1,6 +1,7 @@
 package com.unla.epicentrogourmet.controllers;
 
 import com.unla.epicentrogourmet.dtos.PedidoFormDTO;
+import com.unla.epicentrogourmet.dtos.PedidoResumenDTO;
 import com.unla.epicentrogourmet.entities.Pedido;
 import com.unla.epicentrogourmet.helpers.ViewRouteHelper;
 import com.unla.epicentrogourmet.services.IPedidoService;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/empleado/pedidos")
@@ -55,6 +57,26 @@ public class PedidoController {
         }
 
         return new ModelAndView("redirect:" + ViewRouteHelper.PEDIDO_NEW);
+
+    }
+
+    @GetMapping("/hoy")
+    public ModelAndView hoy (Principal principal){
+
+        ModelAndView mav = new ModelAndView(ViewRouteHelper.PEDIDO_HOY);
+        mav.addObject("username", principal.getName());
+
+        try {
+            List<PedidoResumenDTO> pedidos = pedidoService.traerPedidosDeHoy(principal.getName());
+            mav.addObject("pedidos", pedidos);
+            mav.addObject("totalDelDia", pedidos.stream().mapToDouble(PedidoResumenDTO::getTotal).sum());
+        } catch (IllegalArgumentException e){
+            mav.addObject("error", e.getMessage());
+            mav.addObject("pedidos", List.of());
+            mav.addObject("totalDelDia", 0.0);
+        }
+
+        return mav;
 
     }
 

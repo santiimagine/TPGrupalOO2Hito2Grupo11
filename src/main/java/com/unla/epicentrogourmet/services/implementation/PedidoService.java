@@ -2,6 +2,7 @@ package com.unla.epicentrogourmet.services.implementation;
 
 import com.unla.epicentrogourmet.dtos.ItemPedidoFormDTO;
 import com.unla.epicentrogourmet.dtos.PedidoFormDTO;
+import com.unla.epicentrogourmet.dtos.PedidoResumenDTO;
 import com.unla.epicentrogourmet.entities.*;
 import com.unla.epicentrogourmet.repositories.IEmpleadoRepository;
 import com.unla.epicentrogourmet.repositories.IPedidoRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -98,6 +100,31 @@ public class PedidoService implements IPedidoService {
         caja.registrarVenta(pedido.calcularTotal());
 
         return pedido;
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PedidoResumenDTO> traerPedidosDeHoy(String mailEmpleado) {
+
+        Cajero cajero = traerCajero(mailEmpleado);
+        UnidadVenta unidadVenta = traerUnidadEnCurso(cajero);
+
+        List<PedidoResumenDTO> resultado = new ArrayList<>();
+
+        for (Pedido pedido : pedidoRepository.findByUnidadVentaIdAndFechaOrderByIdDesc(unidadVenta.getId(), LocalDate.now())) {
+
+            PedidoResumenDTO dto = new PedidoResumenDTO();
+            dto.setId(pedido.getId());
+            for (ItemPedido item : pedido.getItems()){
+                dto.getDetalle().add(item.getCantidad() + " x " + item.getPlato().getNombre());
+            }
+            dto.setTotal(pedido.calcularTotal());
+            resultado.add(dto);
+
+        }
+
+        return resultado;
 
     }
 

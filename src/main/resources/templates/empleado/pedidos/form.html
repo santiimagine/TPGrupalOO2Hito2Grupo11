@@ -58,6 +58,7 @@
 
     <button type="submit" class="btn btn-success mr-2" th:disabled="${pedido.items.isEmpty()}">Registrar pedido</button>
     <a th:href="@{/empleado}" class="btn btn-outline-secondary">Volver</a>
+    <a th:href="@{/empleado/pedidos/hoy}" class="btn btn-outline-primary">Pedidos de hoy</a>
   </form>
 
   <a th:if="${pedido == null}" th:href="@{/empleado}" class="btn btn-outline-secondary">Volver</a>

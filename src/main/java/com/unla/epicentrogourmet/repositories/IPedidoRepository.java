@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository("pedidoRepository")
@@ -20,5 +21,6 @@ public interface IPedidoRepository extends JpaRepository<Pedido, Integer> {
     //Cantidad de pedidos del festival
     long countByFestivalId(Integer festivalId);
 
+    List<Pedido> findByUnidadVentaIdAndFechaOrderByIdDesc(Integer unidadVentaId, LocalDate fecha);
 
 }
