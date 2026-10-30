@@ -175,13 +175,17 @@
 
                         <dt class="col-5">Monto total</dt>
                         <dd class="col-7 fw-bold"
-                            th:text="${'$' + #numbers.formatDecimal(caja.montoTotal, 1, 'POINT', 2, 'COMMA')}">$0,00</dd>
+                            th:text="${'$' + #numbers.formatDecimal(totalPedidosCaja, 1, 'POINT', 2, 'COMMA')}">
+                            $0,00
+                        </dd>
 
                         <dt class="col-5">Estado</dt>
                         <dd class="col-7">
                         <span id="cajaEstado" class="badge"
                               th:classappend="${caja.estaAbierta()} ? 'bg-success' : 'bg-secondary'"
-                              th:text="${caja.estado}">ABIERTA</span>
+                              th:text="${caja.estado}">
+                            ABIERTA
+                        </span>
                         </dd>
                     </dl>
 
