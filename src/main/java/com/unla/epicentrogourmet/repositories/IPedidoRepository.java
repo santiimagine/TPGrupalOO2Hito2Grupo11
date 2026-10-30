@@ -23,4 +23,14 @@ public interface IPedidoRepository extends JpaRepository<Pedido, Integer> {
 
     List<Pedido> findByUnidadVentaIdAndFechaOrderByIdDesc(Integer unidadVentaId, LocalDate fecha);
 
+    @Query("""
+    select coalesce(sum(i.cantidad * i.precioUnitario), 0)
+    from Pedido p
+    join p.items i
+    where p.unidadVenta.id = :unidadVentaId
+      and p.fecha = :fecha
+""")
+    Double calcularTotalDelDia(
+            @Param("unidadVentaId") Integer unidadVentaId,
+            @Param("fecha") LocalDate fecha);
 }

@@ -3,6 +3,7 @@ package com.unla.epicentrogourmet.services.implementation;
 import com.unla.epicentrogourmet.dtos.CajaDTO;
 import com.unla.epicentrogourmet.entities.Cajero;
 import com.unla.epicentrogourmet.entities.UnidadVenta;
+import com.unla.epicentrogourmet.repositories.IPedidoRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +21,11 @@ import java.util.List;
 public class CajaService implements ICajaService {
 
     private final ICajaRepository cajaRepository;
+    private final IPedidoRepository pedidoRepository;
 
-    public CajaService(ICajaRepository cajaRepository) {
+    public CajaService(ICajaRepository cajaRepository, IPedidoRepository pedidoRepository) {
         this.cajaRepository = cajaRepository;
+        this.pedidoRepository = pedidoRepository;
     }
 
     @Override
@@ -90,4 +93,26 @@ public class CajaService implements ICajaService {
         return resultado;
 
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Double calcularTotalPedidosCaja(Integer cajaId) {
+
+        Caja caja = cajaRepository.findById(cajaId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Caja inexistente"));
+
+        Double total = pedidoRepository.calcularTotalDelDia(
+                caja.getUnidadVenta().getId(),
+                caja.getFecha()
+        );
+
+        System.out.println("CAJA ID = " + caja.getId());
+        System.out.println("UNIDAD = " + caja.getUnidadVenta().getId());
+        System.out.println("FECHA = " + caja.getFecha());
+        System.out.println("TOTAL PEDIDOS = " + total);
+
+        return total;
+    }
+
 }

@@ -3,6 +3,7 @@ package com.unla.epicentrogourmet.controllers;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 
+import com.unla.epicentrogourmet.entities.Caja;
 import com.unla.epicentrogourmet.services.ICajaService;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
@@ -43,7 +44,17 @@ public class EmpleadoController {
         mv.addObject("esCajero", "Cajero".equals(empleado.getTipoEmpleado()));
 
         if ("Cajero".equals(empleado.getTipoEmpleado())) {
-            mv.addObject("caja", cajaService.traerCajaActual(empleado.getId()));
+
+            Caja caja = cajaService.traerCajaActual(empleado.getId());
+            mv.addObject("caja", caja);
+
+            if (caja != null) {
+
+                Double totalPedidosCaja =
+                        cajaService.calcularTotalPedidosCaja(caja.getId());
+
+                mv.addObject("totalPedidosCaja", totalPedidosCaja);
+            }
         }
         return mv;
     }
