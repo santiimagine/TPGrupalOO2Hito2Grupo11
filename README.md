@@ -1,4 +1,4 @@
-# Epicentro Gourmet - TP Grupal Hito 2 (Spring Boot)
+# Epicentro Gourmet - TP Grupal Hito 2 y 3 (Spring Boot)
 
 Orientación a Objetos II - UNLa - 2026
 
@@ -60,8 +60,9 @@ Notas:
 
 ```
 src/main/java/com/unla/epicentrogourmet
-  configuration/    Configuración de Spring: seguridad (login y rutas por rol) y ModelMapper
+  configuration/    Configuración de Spring: seguridad (login y rutas por rol), ModelMapper y OpenAPI (Swagger)
   controllers/      Reciben las URLs, piden datos a los services y devuelven la vista
+    controllers/api/v1/  Controladores REST de la API
   dtos/             DTOs que viajan a las vistas
   entities/         Entidades JPA
   helpers/          ViewRouteHelper (rutas y vistas), Constantes (valores de negocio)
@@ -105,3 +106,50 @@ Cada actualización del repositorio debe registrarse en la siguiente tabla, indi
 | 28/10/2026 | Empleado (CU individual): Historial de cajas del cajero | [#30](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/30)    | Francisco Robles Acuña |
 | 28/10/2026 | Empleado (CU individual): Pedidos del día de la unidad del cajero | [#31](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/31)    | Francisco Robles Acuña |
 | 30/10/2026 | Empleado: Cerrar Caja - Fix (Visualiza el monto total) | [#32](https://github.com/santiimagine/TPGrupalOO2Hito2Grupo11/pull/32)    | Santiago Saitz |
+
+
+## ApiRest (Hito 3)
+
+La API REST se documenta y se prueba con Swagger. Con la aplicación levantada, abrir:
+
+http://localhost:8080/swagger-ui/index.html
+
+- Los controladores están en `controllers/api/v1` y todas las rutas empiezan con `/api/v1/`.
+- Para poder probarla desde Swagger, la API y su documentación quedan abiertas (sin login).
+- Los errores se devuelven como JSON con código 400 (ver `ApiExceptionHandler`).
+
+### Nicolás Campusano
+
+Controlador: pendiente
+
+| Endpoint | Descripción | PR |
+|---|---|---|
+| POST pendiente | pendiente | pendiente |
+| GET pendiente | pendiente | pendiente |
+
+### Santiago Saitz
+
+Controlador: pendiente
+
+| Endpoint | Descripción | PR |
+|---|---|---|
+| POST pendiente | pendiente | pendiente |
+| GET pendiente | pendiente | pendiente |
+
+### Francisco Robles Acuña
+
+Controlador: pendiente
+
+| Endpoint | Descripción | PR |
+|---|---|---|
+| POST pendiente | pendiente | pendiente |
+| GET pendiente | pendiente | pendiente |
+
+### Emanuel Sotelo
+
+Controlador: pendiente
+
+| Endpoint | Descripción | PR |
+|---|---|---|
+| POST pendiente | pendiente | pendiente |
+| GET pendiente | pendiente | pendiente |
