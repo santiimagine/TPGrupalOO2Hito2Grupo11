@@ -37,6 +37,7 @@ public class SecurityConfiguration {
 					auth.requestMatchers("/css/*", "/imgs/*", "/js/*", "/vendor/bootstrap/css/*",
 							"/vendor/jquery/*", "/vendor/bootstrap/js/*", "/api/v1/**").permitAll();
 					auth.requestMatchers("/", "/index", "/login", "/unidadventa/new", "/unidadventa/create").permitAll();
+					auth.requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll();
 					auth.requestMatchers("/admin/**").hasAuthority(Rol.ADMIN.name());
 					auth.requestMatchers("/responsable/**").hasAuthority(Rol.RESPONSABLE.name());
 					auth.requestMatchers("/empleado/**").hasAuthority(Rol.EMPLEADO.name());
